@@ -16,12 +16,12 @@ class HMAC {
   message: number[];
   blockSize: number;
   outputSize: number;
-  hash: (bytes: number[]) => string;
+  hash: (bytes: number[]) => number[];
 
   constructor(
     key: number[],
     message: number[],
-    hash: (bytes: number[]) => string,
+    hash: (bytes: number[]) => number[],
     blockSize?: number,
     outputSize?: number
   ) {
@@ -33,34 +33,21 @@ class HMAC {
     this.outputSize = outputSize ?? 20;
 
     // If the key is the wrong size, hash it down or pad it up
-    if (this.key.length > this.blockSize) this.key = this.hexToBytes(this.hash(this.key));
+    if (this.key.length > this.blockSize) this.key = this.hash(this.key);
     if (this.key.length < this.blockSize) this.key = this.key.concat(Array(this.blockSize - this.key.length).fill(0));
   }
 
   /**
    * Calculates the HMAC value.
    * 
-   * @returns {string} calculated HMAC value
+   * @returns {number[]} calculated HMAC value
    */
-  calculate(): string {
+  calculate(): number[] {
     let outerPaddedKey = this.key.map(value => value ^ 0x5c); // XORs the key with 0x5c bytes
     let innerPaddedKey = this.key.map(value => value ^ 0x36); // XORs the key with 0x36 bytes
-    let innerHash = this.hexToBytes(this.hash(innerPaddedKey.concat(this.message)));
+    let innerHash = this.hash(innerPaddedKey.concat(this.message));
 
     return this.hash(outerPaddedKey.concat(innerHash));
-  }
-
-  /**
-   * Converts a hex string into a byte array.
-   * The SHA-1 hash function returns a hex string.
-   * 
-   * @param {string} hex - hex string to convert
-   * @returns {number[]} corresponding byte array
-   */
-  hexToBytes(hex: string): number[] {
-    let result: number[] = [];
-    for (let i = 0; i < hex.length; i += 2) result.push(parseInt(hex.substr(i, 2), 16));
-    return result;
   }
 }
 

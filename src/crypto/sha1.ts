@@ -38,9 +38,9 @@ class SHA1 {
   /**
    * Hashes the given bytes using SHA-1.
    * 
-   * @returns {string} hashed message
+   * @returns {number[]} hashed message as bytes
    */
-  hash(): string {
+  hash(): number[] {
     // Split the data into chunks
     for (let chunk = 0; chunk < this.message.byteLength / 64; chunk++) {
       // Split the chunk into 16 32-bit unsigned words
@@ -103,7 +103,7 @@ class SHA1 {
       this.h4 = this.addWrapped(this.h4, e);
     }
 
-    return this.encodeHex(this.h0, this.h1, this.h2, this.h3, this.h4);
+    return this.finalise(this.h0, this.h1, this.h2, this.h3, this.h4);
   }
 
   /**
@@ -134,17 +134,15 @@ class SHA1 {
   }
 
   /**
-   * Encodes the given numbers into a base64 string, treating them as 32-bit unsigned integers.
+   * Encodes the given numbers as a byte string.
    * 
-   * @param {...number} u32s - numbers treated as 32-bit unsigned integers to convert to hex
-   * @returns {string} resultant base64 string
+   * @param {...number} u32s - numbers treated as 32-bit unsigned integers to convert into bytes
+   * @returns {number[]} resultant byte string
    */
-  encodeHex(...u32s: number[]): string {
-    let result = "";
-    for (let u32 of u32s) {
-      let hex = u32.toString(16);
-      result += Array(8 - hex.length).join("0") + hex;
-    };
+  finalise(...u32s: number[]): number[] {
+    let result: number[] = [];
+    for (let u32 of u32s) result = result.concat([
+      (u32 >>> 24) & 0xff, (u32 >>> 16) & 0xff, (u32 >>> 8) & 0xff, u32 & 0xff]);
     return result;
   }
 }
