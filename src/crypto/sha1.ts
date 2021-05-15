@@ -148,3 +148,5 @@ class SHA1 {
     return result;
   }
 }
+
+export default SHA1;

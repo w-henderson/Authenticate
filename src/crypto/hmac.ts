@@ -63,3 +63,5 @@ class HMAC {
     return result;
   }
 }
+
+export default HMAC;
