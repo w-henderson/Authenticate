@@ -18,21 +18,35 @@ class OTPAuth {
   secret: number[];
   label: string;
   issuer: string;
+  digits: number;
+  period: number;
+  algorithm: string;
 
   constructor(url: string) {
     let type = url.match(/(?<=otpauth:\/\/).*(?=\/)/);
-    if (type && type[0] === "totp") {
-      let label = url.match(/(?<=\w\/).*(?=\?)/);
-      let secretBase32 = url.match(/(?<=secret=).*?(?=(&|$))/);
-      let issuer = url.match(/(?<=issuer=).*?(?=(&|$))/);
+    let paramsRaw = url.match(/(?<=otpauth:\/\/.*\/).*/);
+    if (type && type[0] === "totp" && paramsRaw) {
+      let [label, paramString] = paramsRaw[0].split("?");
+      let params = new URLSearchParams(paramString);
 
-      if (label && secretBase32 && issuer) {
+      let splitLabel = label.split(":");
+
+      let secret = params.get("secret");
+      let issuer = splitLabel.length > 1 ? decodeURIComponent(splitLabel[0]) : params.get("issuer") || "";
+      let algorithm = params.get("algorithm") || "SHA1";
+      let digits = parseInt(params.get("digits") || "NaN") || 6;
+      let period = parseInt(params.get("period") || "NaN") || 30;
+
+      if (secret) {
         // If everything was successfully found, parse and save it
-        this.label = decodeURIComponent(label[0]);
-        this.issuer = decodeURIComponent(issuer[0]);
-        this.secret = new Base32().decode(secretBase32[0]);
+        this.label = decodeURIComponent(splitLabel.length > 1 ? splitLabel[1] : label);
+        this.secret = new Base32().decode(secret);
+        this.issuer = issuer;
+        this.algorithm = algorithm;
+        this.digits = digits;
+        this.period = period;
       } else {
-        throw new Error("Could not parse OTPAuth URL.");
+        throw new Error("OTPAuth URLs must include a secret.");
       }
     } else {
       throw new Error("Only supports TOTP codes.");
