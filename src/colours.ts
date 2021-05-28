@@ -1,8 +1,10 @@
-export default {
-  light: "#EDF6F9",
-  dark: "#294257",
-  darkest: "#11202C",
-  accent1: "#508991",
-  accent2: "#09BC8A",
-  accentLight: "#64c5d1",
+const dark = {
+  text: "#fff",
+  background: "#0d0f0f",
+  backgroundHighlight: "#1c1f20",
+  backgroundHighlight2: "#2a2d2e",
+  accent1: "#ef6461",
+  accent2: "#e4b363"
 };
+
+export default dark;

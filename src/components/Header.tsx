@@ -18,18 +18,16 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: "100%",
-    height: 96,
-    padding: 32,
+    height: 72,
+    paddingTop: 12,
+    paddingBottom: 16,
     display: "flex",
     alignItems: "center",
-    alignContent: "center",
-    backgroundColor: colours.dark // maybe remove
+    alignContent: "center"
   },
   text: {
-    color: colours.accentLight,
+    color: colours.accent1,
     fontSize: 32,
-    shadowColor: "rgba(0,0,0,0.5)",
-    shadowRadius: 10,
     fontFamily: "Inter-ExtraBold"
   }
 });

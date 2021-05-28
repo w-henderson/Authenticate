@@ -7,11 +7,18 @@ import { loadAsync } from "expo-font";
 import Header from "./components/Header";
 import CodeView from "./components/CodeView";
 
+import TOTP from "./crypto/totp";
+
 interface AppState {
   loaded: boolean
 }
 
 class App extends React.Component<{}, AppState> {
+  demoCode = {
+    title: "Demo Code",
+    totp: new TOTP([0x78, 0x64])
+  };
+
   constructor(props: {}) {
     super(props);
     this.state = { loaded: false };
@@ -31,13 +38,13 @@ class App extends React.Component<{}, AppState> {
     if (this.state.loaded) {
       return (
         <View style={styles.container}>
-          <StatusBar style="light" />
+          <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
           <Header />
-          <CodeView />
+          <CodeView codes={[this.demoCode]} />
         </View>
       );
     } else {
-      return null;
+      return <View style={styles.container} />;
     }
   }
 }
@@ -45,7 +52,7 @@ class App extends React.Component<{}, AppState> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colours.darkest
+    backgroundColor: colours.background
   }
 });
 
