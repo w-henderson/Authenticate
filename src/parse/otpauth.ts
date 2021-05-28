@@ -1,4 +1,4 @@
-import Base32 from "./base32.ts";
+import Base32 from "./base32";
 
 /**
  * Class encapsulating OTPAuth-related parsing methods.

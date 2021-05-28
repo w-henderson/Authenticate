@@ -1,4 +1,4 @@
-import HOTP from "./hotp.ts";
+import HOTP from "./hotp";
 
 /**
  * Class encapsulating TOTP-related methods.

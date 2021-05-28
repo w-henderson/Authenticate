@@ -1,0 +1,9 @@
+{
+  "extends": "expo/tsconfig.base.json",
+  "compilerOptions": {
+    "strict": true,
+    "lib": [
+      "es2019"
+    ]
+  }
+}

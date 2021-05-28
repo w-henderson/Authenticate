@@ -1,5 +1,5 @@
-import SHA1 from "./sha1.ts";
-import HMAC from "./hmac.ts";
+import SHA1 from "./sha1";
+import HMAC from "./hmac";
 
 /**
  * Class encapsulating HOTP-related methods.
