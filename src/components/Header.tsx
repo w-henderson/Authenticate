@@ -1,9 +1,18 @@
 import React from "react";
 import colours from "../colours";
-import { StyleSheet, Text, View } from "react-native";
-import { IconButton } from "react-native-paper";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Menu, IconButton } from "react-native-paper";
 
-class Header extends React.Component {
+interface HeaderState {
+  menuActive: boolean
+}
+
+class Header extends React.Component<{}, HeaderState> {
+  constructor(props: {}) {
+    super(props);
+    this.state = { menuActive: false };
+  }
+
   render() {
     return (
       <View style={styles.header}>
@@ -13,7 +22,27 @@ class Header extends React.Component {
           size={28}
           color="white"
           style={styles.icon}
-          onPress={() => null} />
+          onPress={() => this.setState({ menuActive: true })} />
+
+        <Menu
+          visible={this.state.menuActive}
+          onDismiss={() => this.setState({ menuActive: false })}
+          anchor={{ x: Dimensions.get("screen").width - 16, y: 0 }}
+          contentStyle={styles.menu}>
+
+          <Menu.Item
+            onPress={() => { }}
+            title="About"
+            titleStyle={styles.menuItem} />
+          <Menu.Item
+            onPress={() => { }}
+            title="Report an Issue"
+            titleStyle={styles.menuItem} />
+          <Menu.Item
+            onPress={() => { }}
+            title="Settings"
+            titleStyle={styles.menuItem} />
+        </Menu>
       </View>
     );
   }
@@ -42,6 +71,13 @@ const styles = StyleSheet.create({
     right: 10,
     top: 10,
     fontSize: 24,
+    color: colours.text
+  },
+  menu: {
+    color: colours.text,
+    backgroundColor: colours.backgroundHighlight2
+  },
+  menuItem: {
     color: colours.text
   }
 });

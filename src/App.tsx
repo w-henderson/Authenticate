@@ -2,7 +2,7 @@ import React from "react";
 import colours from "./colours";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import { FAB } from "react-native-paper";
+import { Provider, FAB } from "react-native-paper";
 import { loadAsync } from "expo-font";
 
 import Header from "./components/Header";
@@ -38,12 +38,14 @@ class App extends React.Component<{}, AppState> {
   render() {
     if (this.state.loaded) {
       return (
-        <View style={styles.container}>
-          <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
-          <Header />
-          <CodeView codes={[this.demoCode]} />
-          <FAB style={styles.actionButton} icon="plus" onPress={() => null} small />
-        </View>
+        <Provider>
+          <View style={styles.container}>
+            <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
+            <Header />
+            <CodeView codes={[this.demoCode]} />
+            <FAB style={styles.actionButton} icon="plus" onPress={() => null} small />
+          </View>
+        </Provider>
       );
     } else {
       return <View style={styles.container} />;
