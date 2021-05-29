@@ -8,7 +8,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0d0f0f"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,8 +22,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "backgroundColor": "#1c1f20"
+      },
+      "package": "com.whenderson.authenticate"
     },
     "web": {
       "favicon": "./assets/favicon.png"
