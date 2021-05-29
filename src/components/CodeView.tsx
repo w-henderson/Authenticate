@@ -16,7 +16,8 @@ interface CodeViewProps {
 interface CodeViewState {
   codes: {
     title: string,
-    code: string
+    code: string,
+    timeRemaining: number
   }[];
 }
 
@@ -26,18 +27,21 @@ class CodeView extends React.Component<CodeViewProps, CodeViewState> {
   constructor(props: CodeViewProps) {
     super(props);
     this.updateValues = this.updateValues.bind(this);
+
     this.state = {
       codes: this.props.codes.map(code => {
         return {
           title: code.title,
-          code: code.totp.value().toString()
+          code: this.codeToString(code.totp.value()),
+          timeRemaining: code.totp.timeUntilUpdate()
         }
       })
     };
   }
 
   componentDidMount() {
-    this.updateInterval = setInterval(this.updateValues, 1000 / 60);
+    let framerate = 30;
+    this.updateInterval = setInterval(this.updateValues, 1000 / framerate);
   }
 
   updateValues() {
@@ -45,7 +49,8 @@ class CodeView extends React.Component<CodeViewProps, CodeViewState> {
       codes: this.props.codes.map(code => {
         return {
           title: code.title,
-          code: code.totp.value().toString()
+          code: this.codeToString(code.totp.value()),
+          timeRemaining: code.totp.timeUntilUpdate()
         }
       })
     });
@@ -55,15 +60,21 @@ class CodeView extends React.Component<CodeViewProps, CodeViewState> {
     if (this.updateInterval) clearInterval(this.updateInterval);
   }
 
+  codeToString(code: number): string {
+    let str = code.toString().padStart(6, "0");
+    let spacedStr = str.substr(0, 3) + " " + str.substr(3, 3);
+    return spacedStr;
+  }
+
   render() {
     return (
       <ScrollView style={styles.codeView}>
-        {this.props.codes.map((code, index) =>
+        {this.state.codes.map((code, index) =>
           <Code
             key={index}
             title={code.title}
-            code={code.totp.value().toString()}
-            amountRemaining={code.totp.timeUntilUpdate() / 30000} />
+            code={code.code}
+            amountRemaining={code.timeRemaining / 30000} />
         )}
       </ScrollView>
     );

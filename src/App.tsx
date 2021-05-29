@@ -2,6 +2,7 @@ import React from "react";
 import colours from "./colours";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
+import { FAB } from "react-native-paper";
 import { loadAsync } from "expo-font";
 
 import Header from "./components/Header";
@@ -41,6 +42,7 @@ class App extends React.Component<{}, AppState> {
           <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
           <Header />
           <CodeView codes={[this.demoCode]} />
+          <FAB style={styles.actionButton} icon="plus" onPress={() => null} small />
         </View>
       );
     } else {
@@ -53,6 +55,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colours.background
+  },
+  actionButton: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    margin: 40,
+    transform: [{ "scale": 1.5 }],
+    backgroundColor: colours.accent1
   }
 });
 
