@@ -1,13 +1,23 @@
+# dependencies
 node_modules/
+
+# workspace config
 .expo/
 .expo-shared/
+
+# logs
 npm-debug.*
+coverage/
+
+# keys
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
 *.orig.*
+
+# builds
 web-build/
 
 # macOS
