@@ -64,12 +64,14 @@ class Base32 {
     let decodedBits: number[] = [];
     for (let char of base32) {
       let index = this.alphabet.indexOf(char);
-      if (index !== -1) decodedBits = decodedBits.concat([index >>> 4 & 1, index >>> 3 & 1, index >>> 2 & 1, index >>> 1 & 1, index & 1])
+      if (index !== -1) decodedBits = decodedBits.concat([index >>> 4 & 1, index >>> 3 & 1, index >>> 2 & 1, index >>> 1 & 1, index & 1]);
     }
 
     // Calculate how many bits to ignore based on the padding and ignore them
-    let ignoredBits: any = { 0: 0, 1: 3, 3: 1, 4: 4, 6: 2 };
-    let ignoredBit = ignoredBits[(base32.match(/=/g) || []).length];
+    let ignoredBit = 0;
+    let ignoredBits: any = { 0: 0, 1: 3, 3: 1, 4: 4, 6: 2, 8: 0 };
+    if (base32.includes("=")) ignoredBit = ignoredBits[(base32.match(/=/g) || []).length];
+    else ignoredBit = ignoredBits[8 - base32.length % 8];
     decodedBits.splice(decodedBits.length - ignoredBit);
 
     // Return bit array to byte array
