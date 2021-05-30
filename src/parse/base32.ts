@@ -70,7 +70,8 @@ class Base32 {
     // Calculate how many bits to ignore based on the padding and ignore them
     let ignoredBit = 0;
     let ignoredBits: any = { 0: 0, 1: 3, 3: 1, 4: 4, 6: 2, 8: 0 };
-    if (base32.includes("=")) ignoredBit = ignoredBits[(base32.match(/=/g) || []).length];
+    let equalses = base32.match(/=/g)?.length || 0;
+    if (equalses) ignoredBit = ignoredBits[equalses];
     else ignoredBit = ignoredBits[8 - base32.length % 8];
     decodedBits.splice(decodedBits.length - ignoredBit);
 
