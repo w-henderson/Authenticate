@@ -1,6 +1,6 @@
 import React from "react";
 import colours from "../colours";
-import { StyleSheet, Text, ScrollView, Dimensions } from "react-native";
+import { StyleSheet, Text, ScrollView, Dimensions, View } from "react-native";
 
 import Code from "./Code";
 
@@ -8,14 +8,16 @@ import TOTP from "../crypto/totp";
 
 interface CodeViewProps {
   codes: {
-    title: string,
+    label: string,
+    issuer: string,
     totp: TOTP
   }[];
 }
 
 interface CodeViewState {
   codes: {
-    title: string,
+    label: string,
+    issuer: string,
     code: string,
     timeRemaining: number
   }[];
@@ -31,7 +33,8 @@ class CodeView extends React.Component<CodeViewProps, CodeViewState> {
     this.state = {
       codes: this.props.codes.map(code => {
         return {
-          title: code.title,
+          label: code.label,
+          issuer: code.issuer,
           code: this.codeToString(code.totp.value()),
           timeRemaining: code.totp.timeUntilUpdate()
         }
@@ -48,7 +51,8 @@ class CodeView extends React.Component<CodeViewProps, CodeViewState> {
     this.setState({
       codes: this.props.codes.map(code => {
         return {
-          title: code.title,
+          label: code.label,
+          issuer: code.issuer,
           code: this.codeToString(code.totp.value()),
           timeRemaining: code.totp.timeUntilUpdate()
         }
@@ -67,17 +71,26 @@ class CodeView extends React.Component<CodeViewProps, CodeViewState> {
   }
 
   render() {
-    return (
-      <ScrollView style={styles.codeView}>
-        {this.state.codes.map((code, index) =>
-          <Code
-            key={index}
-            title={code.title}
-            code={code.code}
-            amountRemaining={code.timeRemaining / 30000} />
-        )}
-      </ScrollView>
-    );
+    if (this.state.codes.length > 0) {
+      return (
+        <ScrollView style={styles.codeView}>
+          {this.state.codes.map((code, index) =>
+            <Code
+              key={index}
+              issuer={code.issuer}
+              label={code.label}
+              code={code.code}
+              amountRemaining={code.timeRemaining / 30000} />
+          )}
+        </ScrollView>
+      );
+    } else {
+      return (
+        <View style={styles.codeView}>
+          <Text style={styles.text}>Add an account to get started!</Text>
+        </View>
+      )
+    }
   }
 }
 
@@ -90,6 +103,12 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height - 96,
     paddingBottom: 8,
     paddingHorizontal: 32
+  },
+  text: {
+    color: colours.text,
+    fontSize: 16,
+    textAlign: "center",
+    fontFamily: "Inter-Regular"
   }
 });
 

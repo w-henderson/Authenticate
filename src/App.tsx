@@ -13,23 +13,20 @@ import TOTP from "./crypto/totp";
 
 interface AppState {
   loaded: boolean,
-  scanningCode: boolean
+  scanningCode: boolean,
+  codes: DisplayCode[]
 }
 
 export interface DisplayCode {
-  title: string,
+  label: string,
+  issuer: string,
   totp: TOTP
 }
 
 class App extends React.Component<{}, AppState> {
-  demoCode: DisplayCode = {
-    title: "Demo Code",
-    totp: new TOTP([0x78, 0x64])
-  };
-
   constructor(props: {}) {
     super(props);
-    this.state = { loaded: false, scanningCode: false };
+    this.state = { loaded: false, scanningCode: false, codes: [] };
     this.addNewCode = this.addNewCode.bind(this);
   }
 
@@ -53,6 +50,7 @@ class App extends React.Component<{}, AppState> {
   }
 
   addNewCode(code: DisplayCode) {
+    this.setState({ codes: this.state.codes.concat([code]) });
     if (this.state.scanningCode) this.setState({ scanningCode: false });
   }
 
@@ -64,7 +62,7 @@ class App extends React.Component<{}, AppState> {
             <View style={styles.container}>
               <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
               <Header />
-              <CodeView codes={[this.demoCode]} />
+              <CodeView codes={this.state.codes} />
               <FAB
                 style={styles.actionButton}
                 icon="plus"
