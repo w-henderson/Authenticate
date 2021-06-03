@@ -1,14 +1,16 @@
 import React from "react";
-import { Dimensions, StyleSheet, Text, View, Button } from "react-native";
+import { Dimensions, StyleSheet, Text, View, Button, Alert } from "react-native";
 import { BarCodeScanningResult, Camera } from "expo-camera";
 import { StatusBar } from "expo-status-bar";
 import { DisplayCode } from "../App";
 import colours from "../colours";
 
 import TOTP from "../crypto/totp";
+import OTPAuth from "../parse/otpauth";
 
 interface CameraScreenState {
-  cameraAllowed: CameraPermission
+  cameraAllowed: CameraPermission,
+  scannerActive: boolean
 }
 
 interface CameraScreenProps {
@@ -25,7 +27,7 @@ enum CameraPermission {
 class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState> {
   constructor(props: CameraScreenProps) {
     super(props);
-    this.state = { cameraAllowed: CameraPermission.Unset };
+    this.state = { cameraAllowed: CameraPermission.Unset, scannerActive: false };
     this.requestCamera = this.requestCamera.bind(this);
     this.codeScanned = this.codeScanned.bind(this);
   }
@@ -36,17 +38,35 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
 
   requestCamera() {
     Camera.requestPermissionsAsync().then(response => {
-      this.setState({
-        cameraAllowed: response.granted ? CameraPermission.Allowed : response.canAskAgain ? CameraPermission.PassiveDenied : CameraPermission.Denied
-      });
+      if (response.granted) {
+        this.setState({ cameraAllowed: CameraPermission.Allowed, scannerActive: true });
+      } else if (response.canAskAgain) {
+        this.setState({ cameraAllowed: CameraPermission.PassiveDenied, scannerActive: false });
+      } else {
+        this.setState({ cameraAllowed: CameraPermission.Denied, scannerActive: false });
+      }
     });
   }
 
   codeScanned(code: BarCodeScanningResult) {
-    this.props.successCallback({
-      title: "fix me",
-      totp: new TOTP([])
-    });
+    try {
+      let auth = new OTPAuth(code.data);
+      this.props.successCallback({
+        title: auth.issuer,
+        totp: new TOTP(auth.secret)
+      });
+    } catch (e) {
+      this.setState({ scannerActive: false });
+      Alert.alert(
+        "Code not recognised",
+        e.message,
+        [
+          {
+            "text": "OK",
+            "onPress": () => this.setState({ scannerActive: true })
+          }
+        ]);
+    }
   }
 
   render() {
@@ -57,7 +77,7 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
           <Camera
             ratio="16:9"
             style={styles.scanner}
-            onBarCodeScanned={this.codeScanned} />
+            onBarCodeScanned={this.state.scannerActive ? this.codeScanned : undefined} />
         </View>
       )
     } else if (this.state.cameraAllowed !== CameraPermission.Unset) {

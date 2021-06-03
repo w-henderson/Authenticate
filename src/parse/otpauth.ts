@@ -1,4 +1,5 @@
 import Base32 from "./base32";
+import 'url-search-params-polyfill';
 
 /**
  * Class encapsulating OTPAuth-related parsing methods.
@@ -23,10 +24,10 @@ class OTPAuth {
   algorithm: string;
 
   constructor(url: string) {
-    let type = url.match(/(?<=otpauth:\/\/).*(?=\/)/);
-    let paramsRaw = url.match(/(?<=otpauth:\/\/.*\/).*/);
-    if (type && type[0] === "totp" && paramsRaw) {
-      let [label, paramString] = paramsRaw[0].split("?");
+    let type = url.match(/otpauth:\/\/.*(?=\/)/);
+    let paramsRaw = url.match(/otpauth:\/\/totp\/.*/);
+    if (type && type[0] === "otpauth://totp" && paramsRaw) {
+      let [label, paramString] = paramsRaw[0].substr(15).split("?");
       let params = new URLSearchParams(paramString);
 
       let splitLabel = label.split(":");
