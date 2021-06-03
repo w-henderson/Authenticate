@@ -1,5 +1,6 @@
 import React from "react";
 import colours from "./colours";
+import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import { BackHandler, StyleSheet, Text, View } from "react-native";
 import { Provider, FAB } from "react-native-paper";
@@ -28,6 +29,7 @@ class App extends React.Component<{}, AppState> {
     super(props);
     this.state = { loaded: false, scanningCode: false, codes: [] };
     this.addNewCode = this.addNewCode.bind(this);
+    this.encodeSavedCodes = this.encodeSavedCodes.bind(this);
   }
 
   componentDidMount() {
@@ -47,11 +49,42 @@ class App extends React.Component<{}, AppState> {
         return false;
       }
     });
+
+    this.decodeSavedCodes().then(codes => {
+      this.setState({ codes });
+    });
   }
 
   addNewCode(code: DisplayCode) {
-    this.setState({ codes: this.state.codes.concat([code]) });
+    this.setState({ codes: this.state.codes.concat([code]) }, this.encodeSavedCodes);
     if (this.state.scanningCode) this.setState({ scanningCode: false });
+  }
+
+  encodeSavedCodes() {
+    let encodedArray = this.state.codes.map(code => {
+      return {
+        label: code.label,
+        issuer: code.issuer,
+        secret: code.totp.key
+      };
+    });
+
+    let encodedString = JSON.stringify(encodedArray);
+    SecureStore.setItemAsync("AUTHENTICATE_KEYS", encodedString);
+  }
+
+  decodeSavedCodes(): Promise<DisplayCode[]> {
+    return SecureStore.getItemAsync("AUTHENTICATE_KEYS").then(encodedString => {
+      if (encodedString === null) return [];
+      let encodedArray: any[] = JSON.parse(encodedString);
+      return encodedArray.map(code => {
+        return {
+          label: code.label,
+          issuer: code.issuer,
+          totp: new TOTP(code.secret)
+        };
+      });
+    });
   }
 
   render() {
