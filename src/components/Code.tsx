@@ -1,12 +1,13 @@
 import React from "react";
 import colours from "../colours";
-import { StyleSheet, Text, View, ViewStyle } from "react-native";
+import { StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
 
 interface CodeProps {
   issuer: string,
   label: string,
   code: string,
-  amountRemaining: number
+  amountRemaining: number,
+  deletionCallback: () => void
 }
 
 class Code extends React.Component<CodeProps> {
@@ -22,12 +23,14 @@ class Code extends React.Component<CodeProps> {
 
     if (this.props.issuer !== "") {
       return (
-        <View style={styles.view}>
-          <Text style={styles.title}>{this.props.issuer}</Text>
-          <Text style={styles.label}>{this.props.label}</Text>
-          <Text style={styles.code}>{this.props.code}</Text>
-          <View style={remainingStyle} />
-        </View>
+        <TouchableWithoutFeedback onLongPress={this.props.deletionCallback}>
+          <View style={styles.view}>
+            <Text style={styles.title}>{this.props.issuer}</Text>
+            <Text style={styles.label}>{this.props.label}</Text>
+            <Text style={styles.code}>{this.props.code}</Text>
+            <View style={remainingStyle} />
+          </View>
+        </TouchableWithoutFeedback>
       );
     } else {
       return (

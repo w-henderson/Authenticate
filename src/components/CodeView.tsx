@@ -12,6 +12,7 @@ interface CodeViewProps {
     issuer: string,
     totp: TOTP
   }[];
+  deletionCallback: (index: number) => void
 }
 
 interface CodeViewState {
@@ -80,7 +81,8 @@ class CodeView extends React.Component<CodeViewProps, CodeViewState> {
               issuer={code.issuer}
               label={code.label}
               code={code.code}
-              amountRemaining={code.timeRemaining / 30000} />
+              amountRemaining={code.timeRemaining / 30000}
+              deletionCallback={() => this.props.deletionCallback(index)} />
           )}
         </ScrollView>
       );

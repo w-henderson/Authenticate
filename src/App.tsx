@@ -2,7 +2,7 @@ import React from "react";
 import colours from "./colours";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
-import { BackHandler, StyleSheet, Text, View } from "react-native";
+import { Alert, BackHandler, StyleSheet, Text, View } from "react-native";
 import { Provider, FAB } from "react-native-paper";
 import { loadAsync } from "expo-font";
 
@@ -30,6 +30,8 @@ class App extends React.Component<{}, AppState> {
     this.state = { loaded: false, scanningCode: false, codes: [] };
     this.addNewCode = this.addNewCode.bind(this);
     this.encodeSavedCodes = this.encodeSavedCodes.bind(this);
+    this.deleteCode = this.deleteCode.bind(this);
+    this.clearCodes = this.clearCodes.bind(this);
   }
 
   componentDidMount() {
@@ -87,6 +89,38 @@ class App extends React.Component<{}, AppState> {
     });
   }
 
+  deleteCode(index: number) {
+    Alert.alert(
+      "Delete this code?",
+      "Deleting this code is permanent. Make sure you've disabled 2FA on this account otherwise you could become permanently locked out.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete Code", style: "destructive", onPress: () => {
+            let codes = this.state.codes;
+            codes.splice(index, 1);
+            this.setState({ codes }, this.encodeSavedCodes);
+          }
+        }
+      ]
+    );
+  }
+
+  clearCodes() {
+    Alert.alert(
+      "Clear your codes?",
+      "Clearing your codes is permanent. Make sure you've disabled 2FA on every account otherwise you could become permanently locked out.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Clear Codes", style: "destructive", onPress: () => {
+            this.setState({ codes: [] }, this.encodeSavedCodes);
+          }
+        }
+      ]
+    );
+  }
+
   render() {
     if (this.state.loaded) {
       if (!this.state.scanningCode) {
@@ -94,8 +128,8 @@ class App extends React.Component<{}, AppState> {
           <Provider>
             <View style={styles.container}>
               <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
-              <Header />
-              <CodeView codes={this.state.codes} />
+              <Header removeCodesCallback={this.clearCodes} />
+              <CodeView codes={this.state.codes} deletionCallback={this.deleteCode} />
               <FAB
                 style={styles.actionButton}
                 icon="plus"

@@ -3,12 +3,16 @@ import colours from "../colours";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { Menu, IconButton } from "react-native-paper";
 
+interface HeaderProps {
+  removeCodesCallback: () => void
+}
+
 interface HeaderState {
   menuActive: boolean
 }
 
-class Header extends React.Component<{}, HeaderState> {
-  constructor(props: {}) {
+class Header extends React.Component<HeaderProps, HeaderState> {
+  constructor(props: HeaderProps) {
     super(props);
     this.state = { menuActive: false };
   }
@@ -33,6 +37,10 @@ class Header extends React.Component<{}, HeaderState> {
           <Menu.Item
             onPress={() => { }}
             title="About"
+            titleStyle={styles.menuItem} />
+          <Menu.Item
+            onPress={() => { this.props.removeCodesCallback(); this.setState({ menuActive: false }) }}
+            title="Remove All Codes"
             titleStyle={styles.menuItem} />
           <Menu.Item
             onPress={() => { }}
