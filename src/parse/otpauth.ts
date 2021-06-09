@@ -30,17 +30,17 @@ class OTPAuth {
       let [label, paramString] = paramsRaw[0].substr(15).split("?");
       let params = new URLSearchParams(paramString);
 
-      let splitLabel = label.split(":");
+      let splitLabel = decodeURIComponent(label).split(":");
 
       let secret = params.get("secret");
-      let issuer = splitLabel.length > 1 ? decodeURIComponent(splitLabel[0]) : params.get("issuer") || "";
+      let issuer = splitLabel.length > 1 ? splitLabel[0] : params.get("issuer") || "";
       let algorithm = params.get("algorithm") || "SHA1";
       let digits = parseInt(params.get("digits") || "NaN") || 6;
       let period = parseInt(params.get("period") || "NaN") || 30;
 
       if (secret) {
         // If everything was successfully found, parse and save it
-        this.label = decodeURIComponent(splitLabel.length > 1 ? splitLabel[1] : label);
+        this.label = splitLabel.length > 1 ? splitLabel[1] : splitLabel[0];
         this.secret = new Base32().decode(secret);
         this.issuer = issuer;
         this.algorithm = algorithm;
