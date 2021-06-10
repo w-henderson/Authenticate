@@ -4,6 +4,8 @@ import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { Menu, IconButton } from "react-native-paper";
 
 interface HeaderProps {
+  editing: boolean,
+  stopEditingCallback: () => void,
   removeCodesCallback: () => void
 }
 
@@ -22,11 +24,14 @@ class Header extends React.Component<HeaderProps, HeaderState> {
       <View style={styles.header}>
         <Text style={styles.text}>Authenticate</Text>
         <IconButton
-          icon="dots-vertical"
+          icon={this.props.editing ? "close" : "dots-vertical"}
           size={28}
           color="white"
           style={styles.icon}
-          onPress={() => this.setState({ menuActive: true })} />
+          onPress={() => {
+            if (this.props.editing) this.props.stopEditingCallback();
+            else this.setState({ menuActive: true })
+          }} />
 
         <Menu
           visible={this.state.menuActive}

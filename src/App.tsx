@@ -15,7 +15,8 @@ import TOTP from "./crypto/totp";
 interface AppState {
   loaded: boolean,
   scanningCode: boolean,
-  codes: DisplayCode[]
+  codes: DisplayCode[],
+  editing: boolean
 }
 
 export interface DisplayCode {
@@ -27,10 +28,11 @@ export interface DisplayCode {
 class App extends React.Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
-    this.state = { loaded: false, scanningCode: false, codes: [] };
+    this.state = { loaded: false, scanningCode: false, codes: [], editing: false };
     this.addNewCode = this.addNewCode.bind(this);
     this.encodeSavedCodes = this.encodeSavedCodes.bind(this);
     this.deleteCode = this.deleteCode.bind(this);
+    this.shiftCode = this.shiftCode.bind(this);
     this.clearCodes = this.clearCodes.bind(this);
   }
 
@@ -106,6 +108,18 @@ class App extends React.Component<{}, AppState> {
     );
   }
 
+  shiftCode(index: number, direction: number) {
+    if (index + direction >= this.state.codes.length || index + direction < 0) return;
+
+    let codes = this.state.codes;
+    let selectedCode = codes[index];
+    let swapCode = codes[index + direction];
+    codes[index] = swapCode;
+    codes[index + direction] = selectedCode;
+
+    this.setState({ codes }, this.encodeSavedCodes);
+  }
+
   clearCodes() {
     Alert.alert(
       "Clear your codes?",
@@ -127,9 +141,20 @@ class App extends React.Component<{}, AppState> {
         return (
           <Provider>
             <View style={styles.container}>
-              <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
-              <Header removeCodesCallback={this.clearCodes} />
-              <CodeView codes={this.state.codes} deletionCallback={this.deleteCode} />
+              <StatusBar
+                style="light"
+                translucent={false}
+                backgroundColor={colours.background} />
+              <Header
+                editing={this.state.editing}
+                removeCodesCallback={this.clearCodes}
+                stopEditingCallback={() => this.setState({ editing: false })} />
+              <CodeView
+                codes={this.state.codes}
+                editing={this.state.editing}
+                editCallback={() => this.setState({ editing: true })}
+                deletionCallback={this.deleteCode}
+                shiftCallback={this.shiftCode} />
               <FAB
                 style={styles.actionButton}
                 icon="plus"

@@ -11,8 +11,11 @@ interface CodeViewProps {
     label: string,
     issuer: string,
     totp: TOTP
-  }[];
-  deletionCallback: (index: number) => void
+  }[],
+  editing: boolean,
+  editCallback: () => void,
+  deletionCallback: (index: number) => void,
+  shiftCallback: (index: number, direction: number) => void
 }
 
 interface CodeViewState {
@@ -44,7 +47,7 @@ class CodeView extends React.Component<CodeViewProps, CodeViewState> {
   }
 
   componentDidMount() {
-    let framerate = 30;
+    let framerate = 15;
     this.updateInterval = setInterval(this.updateValues, 1000 / framerate);
   }
 
@@ -82,6 +85,9 @@ class CodeView extends React.Component<CodeViewProps, CodeViewState> {
               label={code.label}
               code={code.code}
               amountRemaining={code.timeRemaining / 30000}
+              editing={this.props.editing}
+              editCallback={this.props.editCallback}
+              shiftCallback={(direction: number) => this.props.shiftCallback(index, direction)}
               deletionCallback={() => this.props.deletionCallback(index)} />
           )}
         </ScrollView>

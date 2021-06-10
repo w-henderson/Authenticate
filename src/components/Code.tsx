@@ -1,12 +1,16 @@
 import React from "react";
 import colours from "../colours";
 import { StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
+import { IconButton } from "react-native-paper";
 
 interface CodeProps {
   issuer: string,
   label: string,
   code: string,
   amountRemaining: number,
+  editing: boolean,
+  editCallback: () => void,
+  shiftCallback: (direction: number) => void,
   deletionCallback: () => void
 }
 
@@ -21,26 +25,39 @@ class Code extends React.Component<CodeProps> {
       borderRadius: 16
     };
 
-    if (this.props.issuer !== "") {
-      return (
-        <TouchableWithoutFeedback onLongPress={this.props.deletionCallback}>
-          <View style={styles.view}>
-            <Text style={styles.title}>{this.props.issuer}</Text>
-            <Text style={styles.label}>{this.props.label}</Text>
-            <Text style={styles.code}>{this.props.code}</Text>
-            <View style={remainingStyle} />
-          </View>
-        </TouchableWithoutFeedback>
-      );
-    } else {
-      return (
-        <View style={styles.viewSmaller}>
-          <Text style={styles.title}>{this.props.label}</Text>
+    return (
+      <TouchableWithoutFeedback onLongPress={this.props.editCallback}>
+        <View style={this.props.editing ? [styles.view, { paddingLeft: 32 }] : styles.view}>
+          {this.props.editing &&
+            <View style={styles.buttons}>
+              <IconButton
+                icon="chevron-up"
+                size={32}
+                style={styles.button}
+                color={colours.accent2}
+                onPress={() => this.props.shiftCallback(-1)} />
+              <IconButton
+                icon="delete"
+                size={32}
+                style={styles.button}
+                color={colours.accent1}
+                onPress={this.props.deletionCallback} />
+              <IconButton
+                icon="chevron-down"
+                size={32}
+                style={styles.button}
+                color={colours.accent2}
+                onPress={() => this.props.shiftCallback(1)} />
+            </View>
+          }
+
+          {this.props.issuer !== "" && <Text style={styles.title}>{this.props.issuer}</Text>}
+          <Text style={this.props.issuer ? styles.label : styles.title}>{this.props.label}</Text>
           <Text style={styles.code}>{this.props.code}</Text>
           <View style={remainingStyle} />
         </View>
-      );
-    }
+      </TouchableWithoutFeedback>
+    );
   }
 }
 
@@ -52,12 +69,19 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden"
   },
-  viewSmaller: {
-    width: "100%",
-    marginBottom: 28,
-    backgroundColor: colours.backgroundHighlight,
-    borderRadius: 16,
-    overflow: "hidden"
+  buttons: {
+    position: "absolute",
+    display: "flex",
+    flexDirection: "column",
+    width: 32,
+    height: "100%",
+    zIndex: 1
+  },
+  button: {
+    flex: 1,
+    margin: 0,
+    marginLeft: 8,
+    padding: 0
   },
   title: {
     marginTop: 20,
