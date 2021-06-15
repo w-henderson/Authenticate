@@ -22,11 +22,13 @@ const FRAMERATE: number = 15;
 class Code extends React.Component<CodeProps, CodeState> {
   updateInterval: NodeJS.Timeout | undefined;
   lastTimeUntilUpdate: number;
+  lastSecret: number[];
 
   constructor(props: CodeProps) {
     super(props);
     this.updateCode = this.updateCode.bind(this);
     this.lastTimeUntilUpdate = -1;
+    this.lastSecret = [];
     this.state = {
       code: this.codeToString(this.props.code.totp.value()),
       timeUntilUpdate: this.props.code.totp.timeUntilUpdate()
@@ -40,18 +42,15 @@ class Code extends React.Component<CodeProps, CodeState> {
   updateCode() {
     let timeUntilUpdate = this.props.code.totp.timeUntilUpdate();
 
-    if (this.lastTimeUntilUpdate < timeUntilUpdate) {
-      this.lastTimeUntilUpdate = timeUntilUpdate;
-
+    if (this.lastTimeUntilUpdate < timeUntilUpdate || this.lastSecret !== this.props.code.totp.key) {
       this.setState({
         code: this.codeToString(this.props.code.totp.value()),
         timeUntilUpdate
       });
-    } else {
-      this.lastTimeUntilUpdate = timeUntilUpdate;
+    } else this.setState({ timeUntilUpdate });
 
-      this.setState({ timeUntilUpdate });
-    }
+    this.lastTimeUntilUpdate = timeUntilUpdate;
+    this.lastSecret = this.props.code.totp.key;
   }
 
   codeToString(code: number): string {
