@@ -7,6 +7,7 @@ import colours from "../colours";
 
 import TOTP from "../crypto/totp";
 import OTPAuth from "../parse/otpauth";
+import OTPMigration from "../parse/migration";
 
 interface CameraScreenState {
   cameraAllowed: CameraPermission,
@@ -14,7 +15,8 @@ interface CameraScreenState {
 }
 
 interface CameraScreenProps {
-  successCallback: (code: DisplayCode) => void;
+  successCallback: (code: DisplayCode) => void,
+  multipleSuccessCallback: (codes: DisplayCode[]) => void
 }
 
 enum CameraPermission {
@@ -49,24 +51,54 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
   }
 
   codeScanned(code: BarCodeScanningResult) {
-    try {
-      let auth = new OTPAuth(code.data);
-      this.props.successCallback({
-        issuer: "",
-        label: auth.label,
-        totp: new TOTP(auth.secret)
-      });
-    } catch (e) {
-      this.setState({ scannerActive: false });
-      Alert.alert(
-        "Code not recognised",
-        e.message,
-        [
-          {
-            "text": "OK",
-            "onPress": () => this.setState({ scannerActive: true })
-          }
-        ]);
+    this.setState({ scannerActive: false });
+
+    if (code.data.startsWith("otpauth://")) {
+      // Decode single TOTP code
+      try {
+        let auth = new OTPAuth(code.data);
+        this.props.successCallback({
+          issuer: "",
+          label: auth.label,
+          totp: new TOTP(auth.secret)
+        });
+      } catch (e) {
+        Alert.alert("Error decoding migration codes", e.message, [{
+          "text": "OK",
+          "onPress": () => this.setState({ scannerActive: true })
+        }]);
+      }
+    } else if (code.data.startsWith("otpauth-migration://offline")) {
+      // Decode exported migration code containing multiple TOTP codes
+      try {
+        let migration = new OTPMigration(code.data);
+
+        Alert.alert("Codes detected", `Detected ${migration.codes.length} codes, do you want to import them?`, [{
+          "text": "Import",
+          "onPress": () => this.props.multipleSuccessCallback(
+            migration.codes.map((auth: OTPAuth) => {
+              return {
+                issuer: auth.issuer,
+                label: auth.label,
+                totp: new TOTP(auth.secret)
+              }
+            }))
+        }, {
+          "text": "Cancel",
+          "onPress": () => this.setState({ scannerActive: true })
+        }]);
+      } catch (e) {
+        this.setState({ scannerActive: false });
+        Alert.alert("Error decoding migration codes", e.message, [{
+          "text": "OK",
+          "onPress": () => this.setState({ scannerActive: true })
+        }]);
+      }
+    } else {
+      Alert.alert("Error", "Code not recognised", [{
+        "text": "OK",
+        "onPress": () => this.setState({ scannerActive: true })
+      }]);
     }
   }
 

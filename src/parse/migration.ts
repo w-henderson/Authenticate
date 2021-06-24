@@ -1,4 +1,5 @@
 import OTPAuth from "./otpauth";
+import { Buffer } from "buffer";
 
 /**
  * Class encapsulating OTPMigration-related parsing methods.
@@ -39,9 +40,15 @@ class OTPMigration {
       let { data: issuer, length: length3 } = consume(index + length1 + length2);
       index += length1 + length2 + length3 + 5;
 
+      console.log({ secret: secret.toString("hex"), label: label.toString(), issuer: issuer.toString() });
+
+      let regex = /^(\p{L}|\p{N}|\p{P}|\p{S}|\p{Z})+$/gu;
+      if (issuer.toString().match(regex) === null || label.toString().match(regex) === null) continue;
+
+
       this.codes.push(OTPAuth.fromParams({
         secret: [...secret],
-        label: label.toString(),
+        label: label.toString().includes(issuer + ":") ? label.toString().substr(issuer.length + 1) : label.toString(),
         issuer: issuer.toString(),
         digits: 6,
         period: 30,

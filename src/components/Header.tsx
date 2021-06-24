@@ -5,6 +5,7 @@ import { Menu, IconButton } from "react-native-paper";
 
 interface HeaderProps {
   editing: boolean,
+  importCallback: () => void,
   stopEditingCallback: () => void,
   removeCodesCallback: () => void
 }
@@ -42,6 +43,10 @@ class Header extends React.Component<HeaderProps, HeaderState> {
           <Menu.Item
             onPress={() => { }}
             title="About"
+            titleStyle={styles.menuItem} />
+          <Menu.Item
+            onPress={() => { this.props.importCallback(); this.setState({ menuActive: false }) }}
+            title="Import Codes"
             titleStyle={styles.menuItem} />
           <Menu.Item
             onPress={() => { this.props.removeCodesCallback(); this.setState({ menuActive: false }) }}

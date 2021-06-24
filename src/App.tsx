@@ -30,6 +30,7 @@ class App extends React.Component<{}, AppState> {
     super(props);
     this.state = { loaded: false, scanningCode: false, codes: [], editing: false };
     this.addNewCode = this.addNewCode.bind(this);
+    this.addNewCodes = this.addNewCodes.bind(this);
     this.encodeSavedCodes = this.encodeSavedCodes.bind(this);
     this.deleteCode = this.deleteCode.bind(this);
     this.shiftCode = this.shiftCode.bind(this);
@@ -61,6 +62,11 @@ class App extends React.Component<{}, AppState> {
 
   addNewCode(code: DisplayCode) {
     this.setState({ codes: this.state.codes.concat([code]) }, this.encodeSavedCodes);
+    if (this.state.scanningCode) this.setState({ scanningCode: false });
+  }
+
+  addNewCodes(codes: DisplayCode[]) {
+    this.setState({ codes: this.state.codes.concat(codes) }, this.encodeSavedCodes);
     if (this.state.scanningCode) this.setState({ scanningCode: false });
   }
 
@@ -101,7 +107,8 @@ class App extends React.Component<{}, AppState> {
           text: "Delete Code", style: "destructive", onPress: () => {
             let codes = this.state.codes;
             codes.splice(index, 1);
-            this.setState({ codes }, this.encodeSavedCodes);
+            if (codes.length === 0) this.setState({ codes, editing: false }, this.encodeSavedCodes);
+            else this.setState({ codes }, this.encodeSavedCodes);
           }
         }
       ]
@@ -147,6 +154,7 @@ class App extends React.Component<{}, AppState> {
                 backgroundColor={colours.background} />
               <Header
                 editing={this.state.editing}
+                importCallback={() => this.setState({ scanningCode: true })}
                 removeCodesCallback={this.clearCodes}
                 stopEditingCallback={() => this.setState({ editing: false })} />
               <CodeView
@@ -165,7 +173,9 @@ class App extends React.Component<{}, AppState> {
         );
       } else {
         return (
-          <CameraScreen successCallback={this.addNewCode} />
+          <CameraScreen
+            successCallback={this.addNewCode}
+            multipleSuccessCallback={this.addNewCodes} />
         )
       }
     } else {
