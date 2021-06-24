@@ -1,8 +1,9 @@
-import React from "react";
+import React, { memo } from "react";
 import colours from "../colours";
 import { StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
 import { IconButton } from "react-native-paper";
 import { DisplayCode } from "../App";
+import CountdownAnimation from "./CountdownAnimation";
 
 interface CodeProps {
   code: DisplayCode,
@@ -13,44 +14,27 @@ interface CodeProps {
 }
 
 interface CodeState {
-  code: string,
-  timeUntilUpdate: number
+  code: string
 }
-
-const FRAMERATE: number = 15;
 
 class Code extends React.Component<CodeProps, CodeState> {
   updateInterval: NodeJS.Timeout | undefined;
-  lastTimeUntilUpdate: number;
-  lastSecret: number[];
 
   constructor(props: CodeProps) {
     super(props);
     this.updateCode = this.updateCode.bind(this);
-    this.lastTimeUntilUpdate = -1;
-    this.lastSecret = [];
     this.state = {
-      code: this.codeToString(this.props.code.totp.value()),
-      timeUntilUpdate: this.props.code.totp.timeUntilUpdate()
+      code: this.codeToString(this.props.code.totp.value())
     }
   }
 
   componentDidMount() {
-    this.updateInterval = setInterval(this.updateCode, 1000 / FRAMERATE)
+    this.updateCode();
   }
 
   updateCode() {
-    let timeUntilUpdate = this.props.code.totp.timeUntilUpdate();
-
-    if (this.lastTimeUntilUpdate < timeUntilUpdate || this.lastSecret !== this.props.code.totp.key) {
-      this.setState({
-        code: this.codeToString(this.props.code.totp.value()),
-        timeUntilUpdate
-      });
-    } else this.setState({ timeUntilUpdate });
-
-    this.lastTimeUntilUpdate = timeUntilUpdate;
-    this.lastSecret = this.props.code.totp.key;
+    this.setState({ code: this.codeToString(this.props.code.totp.value()) });
+    this.updateInterval = setTimeout(this.updateCode, this.props.code.totp.timeUntilUpdate());
   }
 
   codeToString(code: number): string {
@@ -60,19 +44,10 @@ class Code extends React.Component<CodeProps, CodeState> {
   }
 
   componentWillUnmount() {
-    if (this.updateInterval) clearInterval(this.updateInterval);
+    if (this.updateInterval) clearTimeout(this.updateInterval);
   }
 
   render() {
-    let remainingStyle: ViewStyle = {
-      width: `${(this.state.timeUntilUpdate / this.props.code.totp.interval) * 0.1}%`,
-      height: 8,
-      backgroundColor: colours.backgroundHighlight2,
-      position: "absolute",
-      bottom: 0,
-      borderRadius: 16
-    };
-
     return (
       <TouchableWithoutFeedback onLongPress={this.props.editCallback}>
         <View style={styles.view}>
@@ -105,7 +80,9 @@ class Code extends React.Component<CodeProps, CodeState> {
             <Text style={styles.code}>{this.state.code}</Text>
           </View>
 
-          <View style={remainingStyle} />
+          <CountdownAnimation
+            interval={this.props.code.totp.interval}
+            calculateTimeUntilUpdate={this.props.code.totp.timeUntilUpdate} />
         </View>
       </TouchableWithoutFeedback>
     );
@@ -158,4 +135,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Code;
+export default memo(Code);

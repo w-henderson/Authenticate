@@ -3,15 +3,12 @@ import colours from "../colours";
 import { StyleSheet, Text, ScrollView, Dimensions, View } from "react-native";
 
 import Code from "./Code";
-
+import { DisplayCode } from "../App";
 import TOTP from "../crypto/totp";
+import SHA1 from "../crypto/sha1";
 
 interface CodeViewProps {
-  codes: {
-    label: string,
-    issuer: string,
-    totp: TOTP
-  }[],
+  codes: DisplayCode[],
   editing: boolean,
   editCallback: () => void,
   deletionCallback: (index: number) => void,
@@ -25,7 +22,7 @@ class CodeView extends React.Component<CodeViewProps> {
         <ScrollView style={styles.codeView}>
           {this.props.codes.map((code, index) =>
             <Code
-              key={index}
+              key={code.totp.key.concat([index]).toString()}
               code={code}
               editing={this.props.editing}
               editCallback={this.props.editCallback}
