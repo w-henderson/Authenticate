@@ -53,6 +53,18 @@ class OTPAuth {
       throw new Error("Only supports TOTP codes.");
     }
   }
+
+  static fromParams(params: {
+    secret: number[],
+    label: string,
+    issuer: string,
+    digits: number,
+    period: number,
+    algorithm: string
+  }) {
+    let object: OTPAuth = Object.create(this.prototype);
+    return Object.assign(object, params);
+  }
 }
 
 export default OTPAuth;
