@@ -10,7 +10,8 @@ interface CodeProps {
   editing: boolean,
   editCallback: () => void,
   shiftCallback: (direction: number) => void,
-  deletionCallback: () => void
+  deletionCallback: () => void,
+  copyCallback: (code: number) => void
 }
 
 interface CodeState {
@@ -22,10 +23,12 @@ class Code extends React.Component<CodeProps, CodeState> {
 
   constructor(props: CodeProps) {
     super(props);
-    this.updateCode = this.updateCode.bind(this);
     this.state = {
       code: this.codeToString(this.props.code.totp.value())
     }
+
+    this.updateCode = this.updateCode.bind(this);
+    this.copy = this.copy.bind(this);
   }
 
   componentDidMount() {
@@ -47,9 +50,13 @@ class Code extends React.Component<CodeProps, CodeState> {
     if (this.updateInterval) clearTimeout(this.updateInterval);
   }
 
+  copy() {
+    this.props.copyCallback(this.props.code.totp.value());
+  }
+
   render() {
     return (
-      <TouchableWithoutFeedback onLongPress={this.props.editCallback}>
+      <TouchableWithoutFeedback onPress={this.copy} onLongPress={this.props.editCallback}>
         <View style={styles.view}>
           {this.props.editing &&
             <View style={styles.buttons}>
@@ -117,7 +124,7 @@ const styles = StyleSheet.create({
     color: colours.text,
     fontFamily: "Inter-Regular",
     fontSize: 20,
-    opacity: 0.8
+    opacity: 0.9
   },
   label: {
     fontSize: 12,

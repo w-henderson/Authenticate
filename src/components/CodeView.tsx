@@ -12,7 +12,8 @@ interface CodeViewProps {
   editing: boolean,
   editCallback: () => void,
   deletionCallback: (index: number) => void,
-  shiftCallback: (index: number, direction: number) => void
+  shiftCallback: (index: number, direction: number) => void,
+  copyCallback: (code: number) => void
 }
 
 class CodeView extends React.Component<CodeViewProps> {
@@ -27,7 +28,8 @@ class CodeView extends React.Component<CodeViewProps> {
               editing={this.props.editing}
               editCallback={this.props.editCallback}
               shiftCallback={(direction: number) => this.props.shiftCallback(index, direction)}
-              deletionCallback={() => this.props.deletionCallback(index)} />
+              deletionCallback={() => this.props.deletionCallback(index)}
+              copyCallback={this.props.copyCallback} />
           )}
         </ScrollView>
       );

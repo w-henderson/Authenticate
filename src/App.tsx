@@ -5,10 +5,12 @@ import { StatusBar } from "expo-status-bar";
 import { Alert, BackHandler, StyleSheet, Text, View } from "react-native";
 import { Provider, FAB } from "react-native-paper";
 import { loadAsync } from "expo-font";
+import Clipboard from "expo-clipboard";
 
 import Header from "./components/Header";
 import CodeView from "./components/CodeView";
 import CameraScreen from "./components/CameraScreen";
+import InfoPopup from "./components/InfoPopup";
 
 import TOTP from "./crypto/totp";
 
@@ -16,7 +18,9 @@ interface AppState {
   loaded: boolean,
   scanningCode: boolean,
   codes: DisplayCode[],
-  editing: boolean
+  editing: boolean,
+  popupVisible: boolean,
+  popupMessage: string
 }
 
 export interface DisplayCode {
@@ -26,15 +30,28 @@ export interface DisplayCode {
 }
 
 class App extends React.Component<{}, AppState> {
+  popupTimeout: NodeJS.Timeout | null;
+
   constructor(props: {}) {
     super(props);
-    this.state = { loaded: false, scanningCode: false, codes: [], editing: false };
+    this.state = {
+      loaded: false,
+      scanningCode: false,
+      codes: [],
+      editing: false,
+      popupVisible: false,
+      popupMessage: ""
+    };
+
+    this.popupTimeout = null;
     this.addNewCode = this.addNewCode.bind(this);
     this.addNewCodes = this.addNewCodes.bind(this);
     this.encodeSavedCodes = this.encodeSavedCodes.bind(this);
     this.deleteCode = this.deleteCode.bind(this);
     this.shiftCode = this.shiftCode.bind(this);
     this.clearCodes = this.clearCodes.bind(this);
+    this.showPopup = this.showPopup.bind(this);
+    this.copyCode = this.copyCode.bind(this);
   }
 
   componentDidMount() {
@@ -142,6 +159,19 @@ class App extends React.Component<{}, AppState> {
     );
   }
 
+  showPopup(message: string) {
+    if (this.popupTimeout) clearTimeout(this.popupTimeout);
+    this.setState({ popupVisible: true, popupMessage: message });
+    this.popupTimeout = setTimeout(() => {
+      this.setState({ popupVisible: false });
+    }, 5000);
+  }
+
+  copyCode(code: number) {
+    Clipboard.setString(code.toString().padStart(6, "0"));
+    this.showPopup("Code copied to clipboard");
+  }
+
   render() {
     if (this.state.loaded) {
       if (!this.state.scanningCode) {
@@ -162,12 +192,17 @@ class App extends React.Component<{}, AppState> {
                 editing={this.state.editing}
                 editCallback={() => this.setState({ editing: true })}
                 deletionCallback={this.deleteCode}
-                shiftCallback={this.shiftCode} />
+                shiftCallback={this.shiftCode}
+                copyCallback={this.copyCode} />
               <FAB
                 style={styles.actionButton}
                 icon="plus"
                 onPress={() => this.setState({ scanningCode: true })}
                 small />
+              <InfoPopup
+                visible={this.state.popupVisible}
+                message={this.state.popupMessage}
+                dismissCallback={() => this.setState({ popupVisible: false })} />
             </View>
           </Provider>
         );
