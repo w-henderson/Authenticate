@@ -210,7 +210,8 @@ class App extends React.Component<{}, AppState> {
         return (
           <CameraScreen
             successCallback={this.addNewCode}
-            multipleSuccessCallback={this.addNewCodes} />
+            multipleSuccessCallback={this.addNewCodes}
+            closeCallback={() => this.setState({ scanningCode: false })} />
         )
       }
     } else {

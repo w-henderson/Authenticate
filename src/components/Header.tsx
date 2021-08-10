@@ -1,6 +1,6 @@
 import React from "react";
 import colours from "../colours";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View, Linking } from "react-native";
 import { Menu, IconButton } from "react-native-paper";
 
 interface HeaderProps {
@@ -41,10 +41,6 @@ class Header extends React.Component<HeaderProps, HeaderState> {
           contentStyle={styles.menu}>
 
           <Menu.Item
-            onPress={() => { }}
-            title="About"
-            titleStyle={styles.menuItem} />
-          <Menu.Item
             onPress={() => { this.props.importCallback(); this.setState({ menuActive: false }) }}
             title="Import Codes"
             titleStyle={styles.menuItem} />
@@ -53,12 +49,8 @@ class Header extends React.Component<HeaderProps, HeaderState> {
             title="Remove All Codes"
             titleStyle={styles.menuItem} />
           <Menu.Item
-            onPress={() => { }}
+            onPress={() => { Linking.openURL("https://github.com/w-henderson/Authenticate/issues") }}
             title="Report an Issue"
-            titleStyle={styles.menuItem} />
-          <Menu.Item
-            onPress={() => { }}
-            title="Settings"
             titleStyle={styles.menuItem} />
         </Menu>
       </View>

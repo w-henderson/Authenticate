@@ -1,5 +1,6 @@
 import React from "react";
 import { Dimensions, StyleSheet, Text, View, Button, Alert } from "react-native";
+import { IconButton } from "react-native-paper";
 import { BarCodeScanningResult, Camera } from "expo-camera";
 import { StatusBar } from "expo-status-bar";
 import { DisplayCode } from "../App";
@@ -16,7 +17,8 @@ interface CameraScreenState {
 
 interface CameraScreenProps {
   successCallback: (code: DisplayCode) => void,
-  multipleSuccessCallback: (codes: DisplayCode[]) => void
+  multipleSuccessCallback: (codes: DisplayCode[]) => void,
+  closeCallback: () => void
 }
 
 enum CameraPermission {
@@ -107,6 +109,12 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
       return (
         <View style={styles.view}>
           <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
+          <IconButton
+            icon={"arrow-left-circle"}
+            size={36}
+            color="white"
+            style={styles.icon}
+            onPress={this.props.closeCallback} />
           <Camera
             ratio="16:9"
             style={styles.scanner}
@@ -117,6 +125,12 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
       return (
         <View style={styles.view}>
           <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
+          <IconButton
+            icon={"arrow-left-circle"}
+            size={36}
+            color="white"
+            style={styles.icon}
+            onPress={this.props.closeCallback} />
           <Text style={styles.text}>Please allow camera access to scan a QR code.</Text>
           {this.state.cameraAllowed === CameraPermission.PassiveDenied &&
             <Button
@@ -136,14 +150,18 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
   }
 }
 
-// PERMISSIONS
-
 const styles = StyleSheet.create({
   view: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colours.background,
+  },
+  icon: {
+    position: "absolute",
+    top: 16,
+    left: 16,
+    zIndex: 2
   },
   text: {
     fontFamily: "Inter-Regular",
