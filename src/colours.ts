@@ -1,9 +1,9 @@
 const dark = {
-  text: "#fff",
-  background: "#0d0f0f",
-  backgroundHighlight: "#1c1f20",
-  backgroundHighlight2: "#2a2d2e",
-  accent1: "#ef6461",
+  text: "#292726",
+  background: "#fafafa",
+  backgroundHighlight: "#ffffff",
+  backgroundHighlight2: "#e5e5e5",
+  accent1: "#f89536",
   accent2: "#e4b363"
 };
 

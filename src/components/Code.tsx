@@ -1,17 +1,13 @@
 import React, { memo } from "react";
 import colours from "../colours";
-import { StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
-import { IconButton } from "react-native-paper";
+import { Animated, Image, StyleSheet, Text, View } from "react-native";
 import { DisplayCode } from "../App";
-import CountdownAnimation from "./CountdownAnimation";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
+
+const googleLogo = require("../logos/google.png");
 
 interface CodeProps {
-  code: DisplayCode,
-  editing: boolean,
-  editCallback: () => void,
-  shiftCallback: (direction: number) => void,
-  deletionCallback: () => void,
-  copyCallback: (code: number) => void
+  code: DisplayCode
 }
 
 interface CodeState {
@@ -28,7 +24,6 @@ class Code extends React.Component<CodeProps, CodeState> {
     }
 
     this.updateCode = this.updateCode.bind(this);
-    this.copy = this.copy.bind(this);
   }
 
   componentDidMount() {
@@ -50,48 +45,23 @@ class Code extends React.Component<CodeProps, CodeState> {
     if (this.updateInterval) clearTimeout(this.updateInterval);
   }
 
-  copy() {
-    this.props.copyCallback(this.props.code.totp.value());
-  }
-
   render() {
     return (
-      <TouchableWithoutFeedback onPress={this.copy} onLongPress={this.props.editCallback}>
-        <View style={styles.view}>
-          {this.props.editing &&
-            <View style={styles.buttons}>
-              <IconButton
-                icon="chevron-up"
-                size={32}
-                style={styles.button}
-                color={colours.accent2}
-                onPress={() => this.props.shiftCallback(-1)} />
-              <IconButton
-                icon="delete"
-                size={32}
-                style={styles.button}
-                color={colours.accent1}
-                onPress={this.props.deletionCallback} />
-              <IconButton
-                icon="chevron-down"
-                size={32}
-                style={styles.button}
-                color={colours.accent2}
-                onPress={() => this.props.shiftCallback(1)} />
-            </View>
-          }
-
-          <View style={{ width: "100%", paddingLeft: this.props.editing ? 32 : 0 }}>
-            {this.props.code.issuer !== "" && <Text style={styles.title}>{this.props.code.issuer}</Text>}
-            <Text style={this.props.code.issuer ? styles.label : styles.title}>{this.props.code.label}</Text>
-            <Text style={styles.code}>{this.state.code}</Text>
-          </View>
-
-          <CountdownAnimation
-            interval={this.props.code.totp.interval}
-            calculateTimeUntilUpdate={this.props.code.totp.timeUntilUpdate} />
+      <View style={styles.view}>
+        <View style={styles.imageView}>
+          <AnimatedCircularProgress
+            fill={66}
+            size={140}
+            width={8}
+            rotation={0}
+            tintColor={colours.accent1} />
+          <Image source={googleLogo} style={styles.logo} />
         </View>
-      </TouchableWithoutFeedback>
+        <View>
+          <Text>{this.props.code.issuer}</Text>
+          <Text>{this.props.code.label}</Text>
+        </View>
+      </View>
     );
   }
 }
@@ -99,46 +69,28 @@ class Code extends React.Component<CodeProps, CodeState> {
 const styles = StyleSheet.create({
   view: {
     width: "100%",
-    marginBottom: 28,
-    backgroundColor: colours.backgroundHighlight,
-    borderRadius: 16,
-    overflow: "hidden"
-  },
-  buttons: {
-    position: "absolute",
-    display: "flex",
-    flexDirection: "column",
-    width: 32,
     height: "100%",
-    zIndex: 1
+    marginBottom: 28,
+    borderRadius: 16,
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
-  button: {
-    flex: 1,
-    margin: 0,
-    marginLeft: 8,
-    padding: 0
+  imageView: {
+    width: 140,
+    height: 140,
+    position: "relative"
   },
-  title: {
-    marginTop: 20,
-    marginLeft: 28,
-    color: colours.text,
-    fontFamily: "Inter-Regular",
-    fontSize: 20,
-    opacity: 0.9
-  },
-  label: {
-    fontSize: 12,
-    marginLeft: 28,
-    color: colours.text,
-    fontFamily: "Inter-ExtraLight",
-    opacity: 0.8
-  },
-  code: {
-    marginLeft: 28,
-    marginBottom: 20,
-    color: colours.accent2,
-    fontFamily: "Inter-ExtraBold",
-    fontSize: 48
+  logo: {
+    position: "absolute",
+    top: 6,
+    left: 6,
+    width: 128,
+    height: 128,
+    borderRadius: 64,
+    borderColor: "rgba(0, 0, 0, 0.15)",
+    borderWidth: 1
   }
 });
 

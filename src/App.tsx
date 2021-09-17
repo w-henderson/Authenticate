@@ -2,8 +2,9 @@ import React from "react";
 import colours from "./colours";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
-import { Alert, BackHandler, StyleSheet, Text, View } from "react-native";
+import { Alert, BackHandler, Dimensions, StyleSheet, Text, View } from "react-native";
 import { Provider, FAB } from "react-native-paper";
+import PagerView from "react-native-pager-view";
 import { loadAsync } from "expo-font";
 import Clipboard from "expo-clipboard";
 
@@ -13,6 +14,7 @@ import CameraScreen from "./components/CameraScreen";
 import InfoPopup from "./components/InfoPopup";
 
 import TOTP from "./crypto/totp";
+import Code from "./components/Code";
 
 interface AppState {
   loaded: boolean,
@@ -179,30 +181,19 @@ class App extends React.Component<{}, AppState> {
           <Provider>
             <View style={styles.container}>
               <StatusBar
-                style="light"
+                style="dark"
                 translucent={false}
-                backgroundColor={colours.background} />
+                backgroundColor={colours.backgroundHighlight} />
               <Header
                 editing={this.state.editing}
                 importCallback={() => this.setState({ scanningCode: true })}
                 removeCodesCallback={this.clearCodes}
                 stopEditingCallback={() => this.setState({ editing: false })} />
-              <CodeView
-                codes={this.state.codes}
-                editing={this.state.editing}
-                editCallback={() => this.setState({ editing: true })}
-                deletionCallback={this.deleteCode}
-                shiftCallback={this.shiftCode}
-                copyCallback={this.copyCode} />
-              <FAB
-                style={styles.actionButton}
-                icon="plus"
-                onPress={() => this.setState({ scanningCode: true })}
-                small />
-              <InfoPopup
-                visible={this.state.popupVisible}
-                message={this.state.popupMessage}
-                dismissCallback={() => this.setState({ popupVisible: false })} />
+              <PagerView initialPage={0} style={styles.pager}>
+                {this.state.codes.map((code, index) =>
+                  <Code code={code} key={index} />
+                )}
+              </PagerView>
             </View>
           </Provider>
         );
@@ -225,14 +216,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colours.background
   },
-  actionButton: {
+  pager: {
     position: "absolute",
-    bottom: 0,
-    right: 0,
-    margin: 40,
-    transform: [{ "scale": 1.5 }],
-    backgroundColor: colours.accent1
-  }
+    top: 80,
+    width: "100%",
+    height: Dimensions.get("window").height - 180,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
 });
 
 export default App;

@@ -64,12 +64,13 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: "100%",
-    height: 72,
+    height: 80,
     paddingTop: 12,
     paddingBottom: 16,
     display: "flex",
     alignItems: "center",
-    alignContent: "center"
+    alignContent: "center",
+    backgroundColor: colours.backgroundHighlight
   },
   text: {
     color: colours.accent1,
