@@ -60,7 +60,7 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
       try {
         let auth = new OTPAuth(code.data);
         this.props.successCallback({
-          issuer: "",
+          issuer: auth.issuer,
           label: auth.label,
           totp: new TOTP(auth.secret)
         });
