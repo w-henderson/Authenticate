@@ -4,7 +4,7 @@ import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 import { DisplayCode } from "../App";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 
-import images from "../images";
+import { getLogo } from "../logos/logos";
 
 interface CodeProps {
   code: DisplayCode
@@ -62,7 +62,7 @@ class Code extends React.Component<CodeProps, CodeState> {
             rotation={0}
             tintColor={colours.accent1}
             ref={(ref) => { this.progressLine = ref }} />
-          <Image source={images.logos.google} style={styles.logo} />
+          <Image source={getLogo(this.props.code.issuer)} style={styles.logo} />
         </View>
         <View style={styles.textView}>
           <Text style={styles.issuer}>{this.props.code.issuer}</Text>
