@@ -13,6 +13,7 @@ import CameraScreen from "./components/CameraScreen";
 import InfoPopup from "./components/InfoPopup";
 import Drawer from "./components/Drawer";
 import Code from "./components/Code";
+import Dots from "./components/Dots";
 
 import TOTP from "./crypto/totp";
 
@@ -198,6 +199,9 @@ class App extends React.Component<{}, AppState> {
                   <Code code={code} key={index} />
                 )}
               </PagerView>
+              <Dots
+                dotsCount={this.state.codes.length}
+                selectedDot={this.state.currentCodeIndex} />
               <Drawer
                 code={this.state.codes[this.state.currentCodeIndex]} />
             </View>
@@ -220,13 +224,13 @@ class App extends React.Component<{}, AppState> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colours.background
+    backgroundColor: colours.background,
   },
   pager: {
     position: "absolute",
     top: 80,
     width: "100%",
-    height: Dimensions.get("window").height - 180,
+    height: Dimensions.get("window").height - 220,
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
