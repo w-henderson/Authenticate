@@ -56,7 +56,7 @@ class Code extends React.Component<CodeProps, CodeState> {
       <View style={styles.view}>
         <View style={styles.imageView}>
           <AnimatedCircularProgress
-            fill={this.props.code.totp.timeUntilUpdate() / (this.props.code.totp.interval * 10)}
+            fill={0}
             size={140}
             width={8}
             rotation={0}
