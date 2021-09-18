@@ -2,7 +2,7 @@ import React from "react";
 import colours from "./colours";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
-import { Alert, BackHandler, Dimensions, StyleSheet, Text, View } from "react-native";
+import { Alert, BackHandler, Dimensions, Platform, StyleSheet, Text, UIManager, View } from "react-native";
 import { Provider, FAB } from "react-native-paper";
 import PagerView from "react-native-pager-view";
 import { loadAsync } from "expo-font";
@@ -57,6 +57,13 @@ class App extends React.Component<{}, AppState> {
     this.clearCodes = this.clearCodes.bind(this);
     this.showPopup = this.showPopup.bind(this);
     this.copyCode = this.copyCode.bind(this);
+
+    if (
+      Platform.OS === "android" &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
   }
 
   componentDidMount() {
@@ -203,7 +210,8 @@ class App extends React.Component<{}, AppState> {
                 dotsCount={this.state.codes.length}
                 selectedDot={this.state.currentCodeIndex} />
               <Drawer
-                code={this.state.codes[this.state.currentCodeIndex]} />
+                codes={this.state.codes}
+                codeIndex={this.state.currentCodeIndex} />
             </View>
           </Provider>
         );
