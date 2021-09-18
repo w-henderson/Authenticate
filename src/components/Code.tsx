@@ -4,7 +4,7 @@ import { Animated, Image, StyleSheet, Text, View } from "react-native";
 import { DisplayCode } from "../App";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 
-const googleLogo = require("../logos/google.png");
+import images from "../images";
 
 interface CodeProps {
   code: DisplayCode
@@ -55,7 +55,7 @@ class Code extends React.Component<CodeProps, CodeState> {
             width={8}
             rotation={0}
             tintColor={colours.accent1} />
-          <Image source={googleLogo} style={styles.logo} />
+          <Image source={images.logos.google} style={styles.logo} />
         </View>
         <View>
           <Text>{this.props.code.issuer}</Text>

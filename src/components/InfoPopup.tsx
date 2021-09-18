@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     color: colours.text,
-    fontFamily: "Inter-Regular",
+    fontFamily: "Roboto",
     flex: 1,
     opacity: 0.9
   },

@@ -9,7 +9,6 @@ import { loadAsync } from "expo-font";
 import Clipboard from "expo-clipboard";
 
 import Header from "./components/Header";
-import CodeView from "./components/CodeView";
 import CameraScreen from "./components/CameraScreen";
 import InfoPopup from "./components/InfoPopup";
 
@@ -58,9 +57,8 @@ class App extends React.Component<{}, AppState> {
 
   componentDidMount() {
     loadAsync({
-      "Inter-ExtraLight": require("../assets/fonts/Inter-ExtraLight.ttf"),
-      "Inter-Regular": require("../assets/fonts/Inter-Regular.ttf"),
-      "Inter-ExtraBold": require("../assets/fonts/Inter-ExtraBold.ttf")
+      "Roboto Slab": require("../assets/fonts/RobotoSlab-Bold.ttf"),
+      "Roboto": require("../assets/fonts/Roboto-Regular.ttf")
     }).then(() => {
       this.setState({ loaded: true });
     });

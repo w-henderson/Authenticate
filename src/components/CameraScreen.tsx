@@ -64,7 +64,7 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
           label: auth.label,
           totp: new TOTP(auth.secret)
         });
-      } catch (e) {
+      } catch (e: any) {
         Alert.alert("Error decoding migration codes", e.message, [{
           "text": "OK",
           "onPress": () => this.setState({ scannerActive: true })
@@ -89,7 +89,7 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
           "text": "Cancel",
           "onPress": () => this.setState({ scannerActive: true })
         }]);
-      } catch (e) {
+      } catch (e: any) {
         this.setState({ scannerActive: false });
         Alert.alert("Error decoding migration codes", e.message, [{
           "text": "OK",
@@ -108,7 +108,7 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
     if (this.state.cameraAllowed === CameraPermission.Allowed) {
       return (
         <View style={styles.view}>
-          <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
+          <StatusBar style="light" translucent={true} />
           <IconButton
             icon={"arrow-left-circle"}
             size={36}
@@ -124,7 +124,7 @@ class CameraScreen extends React.Component<CameraScreenProps, CameraScreenState>
     } else if (this.state.cameraAllowed !== CameraPermission.Unset) {
       return (
         <View style={styles.view}>
-          <StatusBar style="light" translucent={false} backgroundColor={colours.background} />
+          <StatusBar style="light" translucent={true} />
           <IconButton
             icon={"arrow-left-circle"}
             size={36}
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     zIndex: 2
   },
   text: {
-    fontFamily: "Inter-Regular",
+    fontFamily: "Roboto",
     color: colours.text,
     fontSize: 24,
     margin: 64,

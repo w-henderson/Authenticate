@@ -1,7 +1,8 @@
 import React from "react";
 import colours from "../colours";
-import { Dimensions, StyleSheet, Text, View, Linking } from "react-native";
+import { Dimensions, StyleSheet, Text, View, Linking, Image } from "react-native";
 import { Menu, IconButton } from "react-native-paper";
+import images from "../images";
 
 interface HeaderProps {
   editing: boolean,
@@ -23,11 +24,12 @@ class Header extends React.Component<HeaderProps, HeaderState> {
   render() {
     return (
       <View style={styles.header}>
+        <Image source={images.icon} style={styles.logo} />
         <Text style={styles.text}>Authenticate</Text>
         <IconButton
           icon={this.props.editing ? "close" : "dots-vertical"}
           size={28}
-          color="white"
+          color={colours.text}
           style={styles.icon}
           onPress={() => {
             if (this.props.editing) this.props.stopEditingCallback();
@@ -65,28 +67,34 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: 80,
-    paddingTop: 12,
-    paddingBottom: 16,
     display: "flex",
     alignItems: "center",
-    alignContent: "center",
-    backgroundColor: colours.backgroundHighlight
+    flexDirection: "row",
+    backgroundColor: colours.backgroundHighlight,
+    borderBottomColor: colours.border,
+    borderBottomWidth: 1
+  },
+  logo: {
+    height: 36,
+    width: 36,
+    marginLeft: 24,
+    marginRight: 20
   },
   text: {
-    color: colours.accent1,
-    fontSize: 32,
-    fontFamily: "Inter-ExtraBold"
+    color: colours.text,
+    fontSize: 28,
+    fontFamily: "Roboto Slab"
   },
   icon: {
     position: "absolute",
-    right: 10,
-    top: 10,
+    right: 13,
+    top: 13,
     fontSize: 24,
     color: colours.text
   },
   menu: {
     color: colours.text,
-    backgroundColor: colours.backgroundHighlight2
+    backgroundColor: colours.background
   },
   menuItem: {
     color: colours.text
