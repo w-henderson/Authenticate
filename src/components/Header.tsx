@@ -1,6 +1,6 @@
 import React from "react";
 import colours from "../colours";
-import { Dimensions, StyleSheet, Text, View, Linking, Image } from "react-native";
+import { Dimensions, StyleSheet, Text, View, Linking, Image, StatusBar } from "react-native";
 import { Menu, IconButton } from "react-native-paper";
 import images from "../images";
 
@@ -39,7 +39,7 @@ class Header extends React.Component<HeaderProps, HeaderState> {
         <Menu
           visible={this.state.menuActive}
           onDismiss={() => this.setState({ menuActive: false })}
-          anchor={{ x: Dimensions.get("screen").width - 16, y: 0 }}
+          anchor={{ x: Dimensions.get("screen").width - 16, y: StatusBar.currentHeight || 0 }}
           contentStyle={styles.menu}>
 
           <Menu.Item
@@ -66,7 +66,8 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: "100%",
-    height: 80,
+    paddingTop: StatusBar.currentHeight || 0,
+    height: 80 + (StatusBar.currentHeight || 0),
     display: "flex",
     alignItems: "center",
     flexDirection: "row",
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
   icon: {
     position: "absolute",
     right: 13,
-    top: 13,
+    top: 13 + (StatusBar.currentHeight || 0),
     fontSize: 24,
     color: colours.text
   },

@@ -24,7 +24,8 @@
     "react-native-paper": "^4.9.1",
     "react-native-svg": "12.1.0",
     "react-native-web": "~0.13.12",
-    "url-search-params-polyfill": "^8.1.1"
+    "url-search-params-polyfill": "^8.1.1",
+    "react-native-reanimated": "~2.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

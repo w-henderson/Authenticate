@@ -2,15 +2,14 @@ import React from "react";
 import colours from "./colours";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
-import { Alert, BackHandler, Dimensions, Platform, StyleSheet, Text, UIManager, View } from "react-native";
-import { Provider, FAB } from "react-native-paper";
+import { Alert, BackHandler, Dimensions, LayoutAnimation, Platform, StyleSheet, UIManager, View, StatusBar as NativeStatusBar } from "react-native";
+import { Provider } from "react-native-paper";
 import PagerView from "react-native-pager-view";
 import { loadAsync } from "expo-font";
 import Clipboard from "expo-clipboard";
 
 import Header from "./components/Header";
 import CameraScreen from "./components/CameraScreen";
-import InfoPopup from "./components/InfoPopup";
 import Drawer from "./components/Drawer";
 import Code from "./components/Code";
 import Dots from "./components/Dots";
@@ -24,7 +23,8 @@ interface AppState {
   currentCodeIndex: number,
   editing: boolean,
   popupVisible: boolean,
-  popupMessage: string
+  popupMessage: string,
+  drawerOpen: boolean
 }
 
 export interface DisplayCode {
@@ -46,6 +46,7 @@ class App extends React.Component<{}, AppState> {
       editing: false,
       popupVisible: false,
       popupMessage: "",
+      drawerOpen: false
     };
 
     this.popupTimeout = null;
@@ -57,6 +58,7 @@ class App extends React.Component<{}, AppState> {
     this.clearCodes = this.clearCodes.bind(this);
     this.showPopup = this.showPopup.bind(this);
     this.copyCode = this.copyCode.bind(this);
+    this.toggleDrawer = this.toggleDrawer.bind(this);
 
     if (
       Platform.OS === "android" &&
@@ -183,6 +185,11 @@ class App extends React.Component<{}, AppState> {
     this.showPopup("Code copied to clipboard");
   }
 
+  toggleDrawer() {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    this.setState({ drawerOpen: !this.state.drawerOpen });
+  }
+
   render() {
     if (this.state.loaded) {
       if (!this.state.scanningCode) {
@@ -191,8 +198,7 @@ class App extends React.Component<{}, AppState> {
             <View style={styles.container}>
               <StatusBar
                 style="dark"
-                translucent={false}
-                backgroundColor={colours.backgroundHighlight} />
+                translucent={true} />
               <Header
                 editing={this.state.editing}
                 importCallback={() => this.setState({ scanningCode: true })}
@@ -211,7 +217,9 @@ class App extends React.Component<{}, AppState> {
                 selectedDot={this.state.currentCodeIndex} />
               <Drawer
                 codes={this.state.codes}
-                codeIndex={this.state.currentCodeIndex} />
+                codeIndex={this.state.currentCodeIndex}
+                drawerOpen={this.state.drawerOpen}
+                callback={this.toggleDrawer} />
             </View>
           </Provider>
         );
@@ -236,7 +244,7 @@ const styles = StyleSheet.create({
   },
   pager: {
     position: "absolute",
-    top: 80,
+    top: 80 + (NativeStatusBar.currentHeight || 0),
     width: "100%",
     height: Dimensions.get("window").height - 220,
     display: "flex",

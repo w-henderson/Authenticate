@@ -1,5 +1,13 @@
 import React from "react";
-import { Dimensions, Image, LayoutAnimation, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View
+} from "react-native";
+import Animated, { EasingNode } from "react-native-reanimated";
 import { IconButton } from "react-native-paper";
 import { DisplayCode } from "../App";
 import colours from "../colours";
@@ -7,55 +15,66 @@ import { getLogo } from "../logos/logos";
 
 interface DrawerProps {
   codes: DisplayCode[],
-  codeIndex: number
+  codeIndex: number,
+  drawerOpen: boolean,
+  callback: () => void
 }
 
-interface DrawerState {
-  maximised: boolean
-}
+function Drawer(props: DrawerProps) {
+  let modalColor = Animated.useSharedValue(0);
 
-class Drawer extends React.Component<DrawerProps, DrawerState> {
-  constructor(props: DrawerProps) {
-    super(props);
-    this.state = { maximised: false };
-    this.toggleMaximised = this.toggleMaximised.bind(this);
+  const preCallback = () => {
+    modalColor.value = Animated.withTiming(props.drawerOpen ? 0 : 1, { duration: 200 });
+    props.callback();
   }
 
-  toggleMaximised() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    this.setState({ maximised: !this.state.maximised });
-  }
+  let containerStyle = props.drawerOpen ? { top: 200, height: Dimensions.get("window").height - 200 } : { bottom: 0 };
+  let modalStyle = Animated.useAnimatedStyle(() => {
+    return {
+      backgroundColor: Animated.interpolateColor(
+        modalColor.value,
+        [0, 1],
+        ["transparent", "rgba(0, 0, 0, 0.5)"]
+      )
+    }
+  })
 
-  render() {
-    let containerStyle = this.state.maximised ? { top: 200, height: Dimensions.get("window").height - 200 } : { bottom: 0 };
-
-    return (
+  return (
+    <Animated.View
+      style={[styles.modal, modalStyle]}
+      pointerEvents={props.drawerOpen ? "auto" : "box-none"}>
       <View style={[styles.container, containerStyle]}>
-        <TouchableWithoutFeedback onPress={this.toggleMaximised}>
+        <TouchableWithoutFeedback onPress={preCallback}>
           <View style={styles.header}>
-            <Image source={getLogo(this.props.codes[this.props.codeIndex].issuer)} style={styles.logo} />
+            <Image source={getLogo(props.codes[props.codeIndex].issuer)} style={styles.logo} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.issuer}>{this.props.codes[this.props.codeIndex].issuer}</Text>
-              <Text style={styles.label}>{this.props.codes[this.props.codeIndex].label}</Text>
+              <Text style={styles.issuer}>{props.codes[props.codeIndex].issuer}</Text>
+              <Text style={styles.label}>{props.codes[props.codeIndex].label}</Text>
             </View>
             <IconButton
-              icon={this.state.maximised ? "chevron-down" : "chevron-up"}
+              icon={props.drawerOpen ? "chevron-down" : "chevron-up"}
               size={28}
               color={colours.text}
               style={{ marginRight: -4 }}
-              onPress={this.toggleMaximised} />
+              onPress={preCallback} />
           </View>
         </TouchableWithoutFeedback>
       </View>
-    )
-  }
+    </Animated.View>
+  );
 }
 
 const styles = StyleSheet.create({
+  modal: {
+    width: "100%",
+    height: "100%"
+  },
   container: {
     position: "absolute",
     width: "100%",
-    backgroundColor: colours.background
+    backgroundColor: colours.background,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
   },
   header: {
     height: 100,
