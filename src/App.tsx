@@ -11,14 +11,16 @@ import Clipboard from "expo-clipboard";
 import Header from "./components/Header";
 import CameraScreen from "./components/CameraScreen";
 import InfoPopup from "./components/InfoPopup";
+import Drawer from "./components/Drawer";
+import Code from "./components/Code";
 
 import TOTP from "./crypto/totp";
-import Code from "./components/Code";
 
 interface AppState {
   loaded: boolean,
   scanningCode: boolean,
   codes: DisplayCode[],
+  currentCodeIndex: number,
   editing: boolean,
   popupVisible: boolean,
   popupMessage: string
@@ -39,9 +41,10 @@ class App extends React.Component<{}, AppState> {
       loaded: false,
       scanningCode: false,
       codes: [],
+      currentCodeIndex: 0,
       editing: false,
       popupVisible: false,
-      popupMessage: ""
+      popupMessage: "",
     };
 
     this.popupTimeout = null;
@@ -187,11 +190,16 @@ class App extends React.Component<{}, AppState> {
                 importCallback={() => this.setState({ scanningCode: true })}
                 removeCodesCallback={this.clearCodes}
                 stopEditingCallback={() => this.setState({ editing: false })} />
-              <PagerView initialPage={0} style={styles.pager}>
+              <PagerView
+                initialPage={0}
+                onPageSelected={e => this.setState({ currentCodeIndex: e.nativeEvent.position })}
+                style={styles.pager}>
                 {this.state.codes.map((code, index) =>
                   <Code code={code} key={index} />
                 )}
               </PagerView>
+              <Drawer
+                code={this.state.codes[this.state.currentCodeIndex]} />
             </View>
           </Provider>
         );
