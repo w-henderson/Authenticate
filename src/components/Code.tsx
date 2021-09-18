@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import colours from "../colours";
-import { Animated, Image, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 import { DisplayCode } from "../App";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 
@@ -16,6 +16,7 @@ interface CodeState {
 
 class Code extends React.Component<CodeProps, CodeState> {
   updateInterval: NodeJS.Timeout | undefined;
+  progressLine: any;
 
   constructor(props: CodeProps) {
     super(props);
@@ -23,6 +24,7 @@ class Code extends React.Component<CodeProps, CodeState> {
       code: this.codeToString(this.props.code.totp.value())
     }
 
+    this.progressLine = React.createRef();
     this.updateCode = this.updateCode.bind(this);
   }
 
@@ -31,8 +33,12 @@ class Code extends React.Component<CodeProps, CodeState> {
   }
 
   updateCode() {
-    this.setState({ code: this.codeToString(this.props.code.totp.value()) });
-    this.updateInterval = setTimeout(this.updateCode, this.props.code.totp.timeUntilUpdate());
+    this.setState({ code: this.codeToString(this.props.code.totp.value()) }, () => {
+      let tuu = this.props.code.totp.timeUntilUpdate()
+      let initialValue = tuu / (this.props.code.totp.interval * 10);
+      this.progressLine.reAnimate(initialValue, 0, tuu, Easing.linear);
+      this.updateInterval = setTimeout(this.updateCode, tuu);
+    });
   }
 
   codeToString(code: number): string {
@@ -50,16 +56,20 @@ class Code extends React.Component<CodeProps, CodeState> {
       <View style={styles.view}>
         <View style={styles.imageView}>
           <AnimatedCircularProgress
-            fill={66}
+            fill={this.props.code.totp.timeUntilUpdate() / (this.props.code.totp.interval * 10)}
             size={140}
             width={8}
             rotation={0}
-            tintColor={colours.accent1} />
+            tintColor={colours.accent1}
+            ref={(ref) => { this.progressLine = ref }} />
           <Image source={images.logos.google} style={styles.logo} />
         </View>
-        <View>
-          <Text>{this.props.code.issuer}</Text>
-          <Text>{this.props.code.label}</Text>
+        <View style={styles.textView}>
+          <Text style={styles.issuer}>{this.props.code.issuer}</Text>
+          <Text style={styles.label}>{this.props.code.label}</Text>
+        </View>
+        <View style={styles.codeView}>
+          <Text style={styles.code}>{this.state.code}</Text>
         </View>
       </View>
     );
@@ -80,7 +90,8 @@ const styles = StyleSheet.create({
   imageView: {
     width: 140,
     height: 140,
-    position: "relative"
+    position: "relative",
+    marginBottom: 48
   },
   logo: {
     position: "absolute",
@@ -91,6 +102,35 @@ const styles = StyleSheet.create({
     borderRadius: 64,
     borderColor: "rgba(0, 0, 0, 0.15)",
     borderWidth: 1
+  },
+  textView: {
+    marginBottom: 48
+  },
+  issuer: {
+    fontFamily: "Roboto Slab",
+    fontSize: 36,
+    marginBottom: 12,
+    color: colours.text,
+    textAlign: "center"
+  },
+  label: {
+    fontFamily: "Roboto",
+    fontSize: 20,
+    color: colours.text,
+    opacity: 0.5,
+    textAlign: "center"
+  },
+  codeView: {
+    backgroundColor: colours.backgroundHighlight,
+    borderRadius: 8,
+    borderColor: colours.border,
+    borderWidth: 1
+  },
+  code: {
+    fontFamily: "Roboto Slab",
+    fontSize: 56,
+    color: colours.text,
+    marginHorizontal: 32
   }
 });
 
