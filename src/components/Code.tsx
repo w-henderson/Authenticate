@@ -1,10 +1,12 @@
 import React, { memo } from "react";
 import colours from "../colours";
-import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
+import { Alert, Easing, Image, StyleSheet, Text, View } from "react-native";
+import Clipboard from "expo-clipboard";
 import { DisplayCode } from "../App";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 
 import { getLogo } from "../logos/logos";
+import { TouchableNativeFeedback } from "react-native";
 
 interface CodeProps {
   code: DisplayCode
@@ -26,6 +28,7 @@ class Code extends React.Component<CodeProps, CodeState> {
 
     this.progressLine = React.createRef();
     this.updateCode = this.updateCode.bind(this);
+    this.copyCode = this.copyCode.bind(this);
   }
 
   componentDidMount() {
@@ -45,6 +48,11 @@ class Code extends React.Component<CodeProps, CodeState> {
     let str = code.toString().padStart(6, "0");
     let spacedStr = str.substr(0, 3) + " " + str.substr(3, 3);
     return spacedStr;
+  }
+
+  copyCode() {
+    Clipboard.setString(this.props.code.totp.value().toString().padStart(6, "0"));
+    Alert.alert("Copied", "Code copied to clipboard");
   }
 
   componentWillUnmount() {
@@ -70,8 +78,12 @@ class Code extends React.Component<CodeProps, CodeState> {
           <Text style={styles.issuer}>{this.props.code.issuer}</Text>
           <Text style={styles.label}>{this.props.code.label}</Text>
         </View>
-        <View style={styles.codeView}>
-          <Text style={styles.code}>{this.state.code}</Text>
+        <View style={styles.touchable}>
+          <TouchableNativeFeedback onPress={this.copyCode}>
+            <View style={styles.codeView}>
+              <Text style={styles.code}>{this.state.code}</Text>
+            </View>
+          </TouchableNativeFeedback>
         </View>
       </View>
     );
@@ -129,12 +141,17 @@ const styles = StyleSheet.create({
     opacity: 0.5,
     textAlign: "center"
   },
+  touchable: {
+    borderRadius: 8,
+    overflow: "hidden",
+    backgroundColor: colours.backgroundHighlight,
+    elevation: 16
+  },
   codeView: {
     backgroundColor: colours.backgroundHighlight,
     borderRadius: 8,
     borderColor: colours.border,
-    borderWidth: 1,
-    elevation: 16
+    borderWidth: 1
   },
   code: {
     fontFamily: "Roboto Slab",

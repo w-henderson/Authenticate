@@ -57,7 +57,6 @@ class App extends React.Component<{}, AppState> {
     this.shiftCode = this.shiftCode.bind(this);
     this.clearCodes = this.clearCodes.bind(this);
     this.showPopup = this.showPopup.bind(this);
-    this.copyCode = this.copyCode.bind(this);
     this.toggleDrawer = this.toggleDrawer.bind(this);
 
     if (
@@ -176,11 +175,6 @@ class App extends React.Component<{}, AppState> {
     this.popupTimeout = setTimeout(() => {
       this.setState({ popupVisible: false });
     }, 5000);
-  }
-
-  copyCode(code: number) {
-    Clipboard.setString(code.toString().padStart(6, "0"));
-    this.showPopup("Code copied to clipboard");
   }
 
   toggleDrawer() {
