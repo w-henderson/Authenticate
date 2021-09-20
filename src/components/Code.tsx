@@ -62,7 +62,9 @@ class Code extends React.Component<CodeProps, CodeState> {
             rotation={0}
             tintColor={colours.accent1}
             ref={(ref) => { this.progressLine = ref }} />
-          <Image source={getLogo(this.props.code.issuer)} style={styles.logo} />
+          <View style={styles.innerImageView}>
+            <Image source={getLogo(this.props.code.issuer)} style={styles.logo} />
+          </View>
         </View>
         <View style={styles.textView}>
           <Text style={styles.issuer}>{this.props.code.issuer}</Text>
@@ -93,10 +95,17 @@ const styles = StyleSheet.create({
     position: "relative",
     marginBottom: 48
   },
-  logo: {
+  innerImageView: {
     position: "absolute",
     top: 6,
     left: 6,
+    width: 128,
+    height: 128,
+    borderRadius: 64,
+    backgroundColor: "white",
+    elevation: 32
+  },
+  logo: {
     width: 128,
     height: 128,
     borderRadius: 64,
@@ -124,7 +133,8 @@ const styles = StyleSheet.create({
     backgroundColor: colours.backgroundHighlight,
     borderRadius: 8,
     borderColor: colours.border,
-    borderWidth: 1
+    borderWidth: 1,
+    elevation: 16
   },
   code: {
     fontFamily: "Roboto Slab",

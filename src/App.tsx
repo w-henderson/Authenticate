@@ -73,20 +73,18 @@ class App extends React.Component<{}, AppState> {
       "Roboto Slab": require("../assets/fonts/RobotoSlab-Bold.ttf"),
       "Roboto": require("../assets/fonts/Roboto-Regular.ttf")
     }).then(() => {
-      this.setState({ loaded: true });
-    });
+      BackHandler.addEventListener("hardwareBackPress", () => {
+        if (this.state.scanningCode) {
+          this.setState({ scanningCode: false });
+          return true;
+        } else {
+          return false;
+        }
+      });
 
-    BackHandler.addEventListener("hardwareBackPress", () => {
-      if (this.state.scanningCode) {
-        this.setState({ scanningCode: false });
-        return true;
-      } else {
-        return false;
-      }
-    });
-
-    this.decodeSavedCodes().then(codes => {
-      this.setState({ codes });
+      this.decodeSavedCodes().then(codes => {
+        this.setState({ codes, loaded: true });
+      });
     });
   }
 

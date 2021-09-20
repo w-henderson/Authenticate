@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: colours.background,
     borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopRightRadius: 32
   },
   header: {
     height: 100,
@@ -86,7 +86,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 32,
     display: "flex",
     flexDirection: "row",
-    padding: 24
+    padding: 24,
+    elevation: 4
   },
   logo: {
     width: 52,
