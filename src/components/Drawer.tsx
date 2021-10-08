@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Dimensions,
+  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -28,7 +29,7 @@ function Drawer(props: DrawerProps) {
     props.callback();
   }
 
-  let containerStyle = props.drawerOpen ? { top: 200, height: Dimensions.get("window").height - 200 } : { bottom: 0 };
+  let containerStyle = props.drawerOpen ? { top: 200, height: Dimensions.get("window").height - 200 } : { bottom: 0, height: 100 };
   let modalStyle = Animated.useAnimatedStyle(() => {
     return {
       backgroundColor: Animated.interpolateColor(
@@ -59,6 +60,23 @@ function Drawer(props: DrawerProps) {
               onPress={preCallback} />
           </View>
         </TouchableWithoutFeedback>
+        <FlatList
+          data={props.codes.map((code, key) => { return { code, key: key.toString() } })}
+          renderItem={data => (
+            <View style={styles.code}>
+              <Image source={getLogo(data.item.code.issuer)} style={styles.logo} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.issuer}>{data.item.code.issuer}</Text>
+                <Text style={styles.label}>{data.item.code.label}</Text>
+              </View>
+              <IconButton
+                icon={"star-outline"}
+                size={28}
+                color={colours.text}
+                style={{ marginRight: -4 }}
+                onPress={() => { }} />
+            </View>
+          )} />
       </View>
     </Animated.View>
   );
@@ -75,6 +93,13 @@ const styles = StyleSheet.create({
     backgroundColor: colours.background,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32
+  },
+  code: {
+    display: "flex",
+    flexDirection: "row",
+    paddingTop: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 0
   },
   header: {
     height: 100,
