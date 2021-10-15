@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   Text,
+  TouchableNativeFeedback,
   TouchableWithoutFeedback,
   View
 } from "react-native";
@@ -18,7 +19,8 @@ interface DrawerProps {
   codes: DisplayCode[],
   codeIndex: number,
   drawerOpen: boolean,
-  callback: () => void
+  callback: () => void,
+  selectCode: (index: number) => void
 }
 
 function Drawer(props: DrawerProps) {
@@ -27,6 +29,11 @@ function Drawer(props: DrawerProps) {
   const preCallback = () => {
     modalColor.value = Animated.withTiming(props.drawerOpen ? 0 : 1, { duration: 200 });
     props.callback();
+  }
+
+  const preSelectCode = (index: number) => {
+    modalColor.value = Animated.withTiming(props.drawerOpen ? 0 : 1, { duration: 200 });
+    props.selectCode(index);
   }
 
   let containerStyle = props.drawerOpen ? { top: 200, height: Dimensions.get("window").height - 200 } : { bottom: 0, height: 100 };
@@ -62,20 +69,29 @@ function Drawer(props: DrawerProps) {
         </TouchableWithoutFeedback>
         <FlatList
           data={props.codes.map((code, key) => { return { code, key: key.toString() } })}
+          contentContainerStyle={styles.listContainer}
           renderItem={data => (
-            <View style={styles.code}>
-              <Image source={getLogo(data.item.code.issuer)} style={styles.logo} />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.issuer}>{data.item.code.issuer}</Text>
-                <Text style={styles.label}>{data.item.code.label}</Text>
+            <TouchableNativeFeedback onPress={() => preSelectCode(parseInt(data.item.key))}>
+              <View style={styles.code}>
+                <Image source={getLogo(data.item.code.issuer)} style={styles.logo} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.issuer}>{data.item.code.issuer}</Text>
+                  <Text style={styles.label} numberOfLines={1} ellipsizeMode="tail">{data.item.code.label}</Text>
+                </View>
+                <IconButton
+                  icon={"trash-can-outline"}
+                  size={28}
+                  color={colours.text}
+                  style={{ marginRight: -4 }}
+                  onPress={() => { }} />
+                <IconButton
+                  icon={"star-outline"}
+                  size={28}
+                  color={colours.text}
+                  style={{ marginRight: -4 }}
+                  onPress={() => { }} />
               </View>
-              <IconButton
-                icon={"star-outline"}
-                size={28}
-                color={colours.text}
-                style={{ marginRight: -4 }}
-                onPress={() => { }} />
-            </View>
+            </TouchableNativeFeedback>
           )} />
       </View>
     </Animated.View>
@@ -87,6 +103,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%"
   },
+  listContainer: {
+    paddingVertical: 12
+  },
   container: {
     position: "absolute",
     width: "100%",
@@ -97,9 +116,8 @@ const styles = StyleSheet.create({
   code: {
     display: "flex",
     flexDirection: "row",
-    paddingTop: 24,
-    paddingHorizontal: 24,
-    paddingBottom: 0
+    paddingVertical: 12,
+    paddingHorizontal: 24
   },
   header: {
     height: 100,

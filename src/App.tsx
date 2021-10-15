@@ -35,6 +35,7 @@ export interface DisplayCode {
 
 class App extends React.Component<{}, AppState> {
   popupTimeout: NodeJS.Timeout | null;
+  pagerRef: React.LegacyRef<PagerView>;
 
   constructor(props: {}) {
     super(props);
@@ -58,6 +59,9 @@ class App extends React.Component<{}, AppState> {
     this.clearCodes = this.clearCodes.bind(this);
     this.showPopup = this.showPopup.bind(this);
     this.toggleDrawer = this.toggleDrawer.bind(this);
+    this.selectCode = this.selectCode.bind(this);
+
+    this.pagerRef = React.createRef();
 
     if (
       Platform.OS === "android" &&
@@ -182,6 +186,12 @@ class App extends React.Component<{}, AppState> {
     this.setState({ drawerOpen: !this.state.drawerOpen });
   }
 
+  selectCode(index: number) {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    this.setState({ drawerOpen: false });
+    (this as any).pagerRef.current.setPage(index);
+  }
+
   render() {
     if (this.state.loaded) {
       if (!this.state.scanningCode) {
@@ -198,6 +208,7 @@ class App extends React.Component<{}, AppState> {
                 stopEditingCallback={() => this.setState({ editing: false })} />
               <PagerView
                 initialPage={0}
+                ref={this.pagerRef}
                 onPageSelected={e => this.setState({ currentCodeIndex: e.nativeEvent.position })}
                 style={styles.pager}>
                 {this.state.codes.map((code, index) =>
@@ -211,7 +222,8 @@ class App extends React.Component<{}, AppState> {
                 codes={this.state.codes}
                 codeIndex={this.state.currentCodeIndex}
                 drawerOpen={this.state.drawerOpen}
-                callback={this.toggleDrawer} />
+                callback={this.toggleDrawer}
+                selectCode={this.selectCode} />
             </View>
           </Provider>
         );
