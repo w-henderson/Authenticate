@@ -30,6 +30,7 @@ interface AppState {
 export interface DisplayCode {
   label: string,
   issuer: string,
+  starred: boolean,
   totp: TOTP
 }
 
@@ -60,6 +61,7 @@ class App extends React.Component<{}, AppState> {
     this.showPopup = this.showPopup.bind(this);
     this.toggleDrawer = this.toggleDrawer.bind(this);
     this.selectCode = this.selectCode.bind(this);
+    this.toggleStarred = this.toggleStarred.bind(this);
 
     this.pagerRef = React.createRef();
 
@@ -106,6 +108,7 @@ class App extends React.Component<{}, AppState> {
       return {
         label: code.label,
         issuer: code.issuer,
+        starred: code.starred,
         secret: code.totp.key
       };
     });
@@ -122,7 +125,8 @@ class App extends React.Component<{}, AppState> {
         return {
           label: code.label,
           issuer: code.issuer,
-          totp: new TOTP(code.secret)
+          starred: code.starred === true,
+          totp: new TOTP(code.secret),
         };
       });
     });
@@ -192,6 +196,12 @@ class App extends React.Component<{}, AppState> {
     (this as any).pagerRef.current.setPage(index);
   }
 
+  toggleStarred(index: number) {
+    let codes = this.state.codes;
+    codes[index].starred = !codes[index].starred;
+    this.setState({ codes }, this.encodeSavedCodes);
+  }
+
   render() {
     if (this.state.loaded) {
       if (!this.state.scanningCode) {
@@ -224,7 +234,8 @@ class App extends React.Component<{}, AppState> {
                 drawerOpen={this.state.drawerOpen}
                 callback={this.toggleDrawer}
                 selectCode={this.selectCode}
-                deleteCode={this.deleteCode} />
+                deleteCode={this.deleteCode}
+                toggleStarred={this.toggleStarred} />
             </View>
           </Provider>
         );

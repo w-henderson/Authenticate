@@ -21,7 +21,8 @@ interface DrawerProps {
   drawerOpen: boolean,
   callback: () => void,
   selectCode: (index: number) => void,
-  deleteCode: (index: number) => void
+  deleteCode: (index: number) => void,
+  toggleStarred: (index: number) => void
 }
 
 function Drawer(props: DrawerProps) {
@@ -46,7 +47,12 @@ function Drawer(props: DrawerProps) {
         ["transparent", "rgba(0, 0, 0, 0.5)"]
       )
     }
-  })
+  });
+
+  let codes = props.codes.map((code, key) => { return { code, key: key.toString() } });
+  let starredCodes = codes.filter(code => code.code.starred);
+  let unstarredCodes = codes.filter(code => !code.code.starred);
+  codes = starredCodes.concat(unstarredCodes);
 
   return (
     <Animated.View
@@ -69,7 +75,7 @@ function Drawer(props: DrawerProps) {
           </View>
         </TouchableWithoutFeedback>
         <FlatList
-          data={props.codes.map((code, key) => { return { code, key: key.toString() } })}
+          data={codes}
           contentContainerStyle={styles.listContainer}
           renderItem={data => (
             <TouchableNativeFeedback onPress={() => preSelectCode(parseInt(data.item.key))}>
@@ -86,11 +92,11 @@ function Drawer(props: DrawerProps) {
                   style={{ marginRight: -4 }}
                   onPress={() => props.deleteCode(parseInt(data.item.key))} />
                 <IconButton
-                  icon={"star-outline"}
+                  icon={data.item.code.starred ? "star" : "star-outline"}
                   size={28}
-                  color={colours.text}
+                  color={data.item.code.starred ? "gold" : colours.text}
                   style={{ marginRight: -4 }}
-                  onPress={() => { }} />
+                  onPress={() => props.toggleStarred(parseInt(data.item.key))} />
               </View>
             </TouchableNativeFeedback>
           )} />
