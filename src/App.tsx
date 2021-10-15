@@ -223,7 +223,8 @@ class App extends React.Component<{}, AppState> {
                 codeIndex={this.state.currentCodeIndex}
                 drawerOpen={this.state.drawerOpen}
                 callback={this.toggleDrawer}
-                selectCode={this.selectCode} />
+                selectCode={this.selectCode}
+                deleteCode={this.deleteCode} />
             </View>
           </Provider>
         );

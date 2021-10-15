@@ -20,7 +20,8 @@ interface DrawerProps {
   codeIndex: number,
   drawerOpen: boolean,
   callback: () => void,
-  selectCode: (index: number) => void
+  selectCode: (index: number) => void,
+  deleteCode: (index: number) => void
 }
 
 function Drawer(props: DrawerProps) {
@@ -83,7 +84,7 @@ function Drawer(props: DrawerProps) {
                   size={28}
                   color={colours.text}
                   style={{ marginRight: -4 }}
-                  onPress={() => { }} />
+                  onPress={() => props.deleteCode(parseInt(data.item.key))} />
                 <IconButton
                   icon={"star-outline"}
                   size={28}
