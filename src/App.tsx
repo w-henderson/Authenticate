@@ -22,7 +22,6 @@ interface AppState {
   scanningCode: boolean,
   codes: DisplayCode[],
   currentCodeIndex: number,
-  editing: boolean,
   popupVisible: boolean,
   popupMessage: string,
   drawerOpen: boolean
@@ -46,7 +45,6 @@ class App extends React.Component<{}, AppState> {
       scanningCode: false,
       codes: [],
       currentCodeIndex: 0,
-      editing: false,
       popupVisible: false,
       popupMessage: "",
       drawerOpen: false
@@ -57,7 +55,6 @@ class App extends React.Component<{}, AppState> {
     this.addNewCodes = this.addNewCodes.bind(this);
     this.encodeSavedCodes = this.encodeSavedCodes.bind(this);
     this.deleteCode = this.deleteCode.bind(this);
-    this.shiftCode = this.shiftCode.bind(this);
     this.clearCodes = this.clearCodes.bind(this);
     this.showPopup = this.showPopup.bind(this);
     this.toggleDrawer = this.toggleDrawer.bind(this);
@@ -143,24 +140,11 @@ class App extends React.Component<{}, AppState> {
           text: "Delete Code", style: "destructive", onPress: () => {
             let codes = this.state.codes;
             codes.splice(index, 1);
-            if (codes.length === 0) this.setState({ codes, editing: false }, this.encodeSavedCodes);
-            else this.setState({ codes }, this.encodeSavedCodes);
+            this.setState({ codes }, this.encodeSavedCodes);
           }
         }
       ]
     );
-  }
-
-  shiftCode(index: number, direction: number) {
-    if (index + direction >= this.state.codes.length || index + direction < 0) return;
-
-    let codes = this.state.codes;
-    let selectedCode = codes[index];
-    let swapCode = codes[index + direction];
-    codes[index] = swapCode;
-    codes[index + direction] = selectedCode;
-
-    this.setState({ codes }, this.encodeSavedCodes);
   }
 
   clearCodes() {
@@ -219,16 +203,16 @@ class App extends React.Component<{}, AppState> {
                   style="dark"
                   translucent={true} />
                 <Header
-                  editing={this.state.editing}
                   importCallback={() => this.setState({ scanningCode: true })}
                   removeCodesCallback={this.clearCodes} />
                 <PagerView
                   initialPage={0}
                   ref={this.pagerRef}
                   onPageSelected={e => this.setState({ currentCodeIndex: e.nativeEvent.position })}
+                  offscreenPageLimit={1}
                   style={styles.pager}>
-                  {codes.map(code =>
-                    <Code code={code.code} key={code.key} />
+                  {codes.map((code, index) =>
+                    <Code code={code.code} key={index} />
                   )}
                 </PagerView>
                 <Dots
@@ -253,10 +237,10 @@ class App extends React.Component<{}, AppState> {
                   style="dark"
                   translucent={true} />
                 <Header
-                  editing={this.state.editing}
                   importCallback={() => this.setState({ scanningCode: true })}
                   removeCodesCallback={this.clearCodes} />
-                <WelcomeScreen />
+                <WelcomeScreen
+                  scanCallback={() => this.setState({ scanningCode: true })} />
               </View>
             </Provider>
           )

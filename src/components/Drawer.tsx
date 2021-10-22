@@ -54,6 +54,9 @@ function Drawer(props: DrawerProps) {
   let unstarredCodes = codes.filter(code => !code.code.starred);
   codes = starredCodes.concat(unstarredCodes);
 
+  // The key field represents the index stored on disk.
+  // The actual order represents the order in memory, respecting stars.
+
   return (
     <Animated.View
       style={[styles.modal, modalStyle]}
@@ -74,32 +77,35 @@ function Drawer(props: DrawerProps) {
               onPress={preCallback} />
           </View>
         </TouchableWithoutFeedback>
-        <FlatList
-          data={codes}
-          contentContainerStyle={styles.listContainer}
-          renderItem={data => (
-            <TouchableNativeFeedback onPress={() => preSelectCode(data.index)}>
-              <View style={styles.code}>
-                <Image source={getLogo(data.item.code.issuer)} style={styles.logo} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.issuer}>{data.item.code.issuer}</Text>
-                  <Text style={styles.label} numberOfLines={1} ellipsizeMode="tail">{data.item.code.label}</Text>
+
+        {props.drawerOpen &&
+          <FlatList
+            data={codes}
+            contentContainerStyle={styles.listContainer}
+            renderItem={data => (
+              <TouchableNativeFeedback onPress={() => preSelectCode(data.index)}>
+                <View style={styles.code}>
+                  <Image source={getLogo(data.item.code.issuer)} style={styles.logo} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.issuer}>{data.item.code.issuer}</Text>
+                    <Text style={styles.label} numberOfLines={1} ellipsizeMode="tail">{data.item.code.label}</Text>
+                  </View>
+                  <IconButton
+                    icon={"trash-can-outline"}
+                    size={28}
+                    color={colours.text}
+                    style={{ marginRight: -4 }}
+                    onPress={() => props.deleteCode(parseInt(data.item.key))} />
+                  <IconButton
+                    icon={data.item.code.starred ? "star" : "star-outline"}
+                    size={28}
+                    color={data.item.code.starred ? "gold" : colours.text}
+                    style={{ marginRight: -4 }}
+                    onPress={() => props.toggleStarred(parseInt(data.item.key))} />
                 </View>
-                <IconButton
-                  icon={"trash-can-outline"}
-                  size={28}
-                  color={colours.text}
-                  style={{ marginRight: -4 }}
-                  onPress={() => props.deleteCode(data.index)} />
-                <IconButton
-                  icon={data.item.code.starred ? "star" : "star-outline"}
-                  size={28}
-                  color={data.item.code.starred ? "gold" : colours.text}
-                  style={{ marginRight: -4 }}
-                  onPress={() => props.toggleStarred(data.index)} />
-              </View>
-            </TouchableNativeFeedback>
-          )} />
+              </TouchableNativeFeedback>
+            )} />
+        }
       </View>
     </Animated.View>
   );

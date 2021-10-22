@@ -5,7 +5,6 @@ import { Menu, IconButton } from "react-native-paper";
 import images from "../images";
 
 interface HeaderProps {
-  editing: boolean,
   importCallback: () => void,
   removeCodesCallback: () => void
 }
@@ -26,13 +25,11 @@ class Header extends React.Component<HeaderProps, HeaderState> {
         <Image source={images.icon} style={styles.logo} />
         <Text style={styles.text}>Authenticate</Text>
         <IconButton
-          icon={this.props.editing ? "close" : "dots-vertical"}
+          icon={"dots-vertical"}
           size={28}
           color={colours.text}
           style={styles.icon}
-          onPress={() => {
-            this.setState({ menuActive: true })
-          }} />
+          onPress={() => { this.setState({ menuActive: true }) }} />
 
         <Menu
           visible={this.state.menuActive}

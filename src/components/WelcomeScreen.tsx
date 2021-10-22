@@ -6,7 +6,11 @@ import Button from "./Button";
 
 const welcome = require("../../assets/welcome.png");
 
-class WelcomeScreen extends React.Component {
+interface WelcomeScreenProps {
+  scanCallback: () => void
+}
+
+class WelcomeScreen extends React.Component<WelcomeScreenProps> {
   render() {
     return (
       <View style={styles.container}>
@@ -19,8 +23,8 @@ class WelcomeScreen extends React.Component {
         </View>
 
         <View style={styles.buttons}>
-          <Button text="Scan a Code" onPress={() => { }} style={{ marginTop: 16 }} />
-          <Button text="Import Multiple Codes" onPress={() => { }} style={{ marginTop: 16 }} />
+          <Button text="Scan a Code" onPress={this.props.scanCallback} style={{ marginTop: 16 }} />
+          <Button text="Import Multiple Codes" onPress={this.props.scanCallback} style={{ marginTop: 16 }} />
         </View>
       </View>
     )
