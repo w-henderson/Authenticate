@@ -15,6 +15,7 @@ import Code from "./components/Code";
 import Dots from "./components/Dots";
 
 import TOTP from "./crypto/totp";
+import WelcomeScreen from "./components/WelcomeScreen";
 
 interface AppState {
   loaded: boolean,
@@ -210,40 +211,56 @@ class App extends React.Component<{}, AppState> {
 
     if (this.state.loaded) {
       if (!this.state.scanningCode) {
-        return (
-          <Provider>
-            <View style={styles.container}>
-              <StatusBar
-                style="dark"
-                translucent={true} />
-              <Header
-                editing={this.state.editing}
-                importCallback={() => this.setState({ scanningCode: true })}
-                removeCodesCallback={this.clearCodes}
-                stopEditingCallback={() => this.setState({ editing: false })} />
-              <PagerView
-                initialPage={0}
-                ref={this.pagerRef}
-                onPageSelected={e => this.setState({ currentCodeIndex: e.nativeEvent.position })}
-                style={styles.pager}>
-                {codes.map(code =>
-                  <Code code={code.code} key={code.key} />
-                )}
-              </PagerView>
-              <Dots
-                dotsCount={this.state.codes.length}
-                selectedDot={this.state.currentCodeIndex} />
-              <Drawer
-                codes={this.state.codes}
-                codeIndex={this.state.currentCodeIndex}
-                drawerOpen={this.state.drawerOpen}
-                callback={this.toggleDrawer}
-                selectCode={this.selectCode}
-                deleteCode={this.deleteCode}
-                toggleStarred={this.toggleStarred} />
-            </View>
-          </Provider>
-        );
+        if (this.state.codes.length > 0) {
+          return (
+            <Provider>
+              <View style={styles.container}>
+                <StatusBar
+                  style="dark"
+                  translucent={true} />
+                <Header
+                  editing={this.state.editing}
+                  importCallback={() => this.setState({ scanningCode: true })}
+                  removeCodesCallback={this.clearCodes} />
+                <PagerView
+                  initialPage={0}
+                  ref={this.pagerRef}
+                  onPageSelected={e => this.setState({ currentCodeIndex: e.nativeEvent.position })}
+                  style={styles.pager}>
+                  {codes.map(code =>
+                    <Code code={code.code} key={code.key} />
+                  )}
+                </PagerView>
+                <Dots
+                  dotsCount={this.state.codes.length}
+                  selectedDot={this.state.currentCodeIndex} />
+                <Drawer
+                  codes={this.state.codes}
+                  codeIndex={this.state.currentCodeIndex}
+                  drawerOpen={this.state.drawerOpen}
+                  callback={this.toggleDrawer}
+                  selectCode={this.selectCode}
+                  deleteCode={this.deleteCode}
+                  toggleStarred={this.toggleStarred} />
+              </View>
+            </Provider>
+          );
+        } else {
+          return (
+            <Provider>
+              <View style={styles.container}>
+                <StatusBar
+                  style="dark"
+                  translucent={true} />
+                <Header
+                  editing={this.state.editing}
+                  importCallback={() => this.setState({ scanningCode: true })}
+                  removeCodesCallback={this.clearCodes} />
+                <WelcomeScreen />
+              </View>
+            </Provider>
+          )
+        }
       } else {
         return (
           <CameraScreen

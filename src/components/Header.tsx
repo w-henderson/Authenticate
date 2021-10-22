@@ -7,7 +7,6 @@ import images from "../images";
 interface HeaderProps {
   editing: boolean,
   importCallback: () => void,
-  stopEditingCallback: () => void,
   removeCodesCallback: () => void
 }
 
@@ -32,8 +31,7 @@ class Header extends React.Component<HeaderProps, HeaderState> {
           color={colours.text}
           style={styles.icon}
           onPress={() => {
-            if (this.props.editing) this.props.stopEditingCallback();
-            else this.setState({ menuActive: true })
+            this.setState({ menuActive: true })
           }} />
 
         <Menu
