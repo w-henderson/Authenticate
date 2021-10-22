@@ -203,6 +203,11 @@ class App extends React.Component<{}, AppState> {
   }
 
   render() {
+    let codes = this.state.codes.map((code, key) => { return { code, key: key.toString() } });
+    let starredCodes = codes.filter(code => code.code.starred);
+    let unstarredCodes = codes.filter(code => !code.code.starred);
+    codes = starredCodes.concat(unstarredCodes);
+
     if (this.state.loaded) {
       if (!this.state.scanningCode) {
         return (
@@ -221,8 +226,8 @@ class App extends React.Component<{}, AppState> {
                 ref={this.pagerRef}
                 onPageSelected={e => this.setState({ currentCodeIndex: e.nativeEvent.position })}
                 style={styles.pager}>
-                {this.state.codes.map((code, index) =>
-                  <Code code={code} key={index} />
+                {codes.map(code =>
+                  <Code code={code.code} key={code.key} />
                 )}
               </PagerView>
               <Dots

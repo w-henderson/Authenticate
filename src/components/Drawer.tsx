@@ -61,10 +61,10 @@ function Drawer(props: DrawerProps) {
       <View style={[styles.container, containerStyle]}>
         <TouchableWithoutFeedback onPress={preCallback}>
           <View style={styles.header}>
-            <Image source={getLogo(props.codes[props.codeIndex].issuer)} style={styles.logo} />
+            <Image source={getLogo(codes[props.codeIndex].code.issuer)} style={styles.logo} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.issuer}>{props.codes[props.codeIndex].issuer}</Text>
-              <Text style={styles.label}>{props.codes[props.codeIndex].label}</Text>
+              <Text style={styles.issuer}>{codes[props.codeIndex].code.issuer}</Text>
+              <Text style={styles.label}>{codes[props.codeIndex].code.label}</Text>
             </View>
             <IconButton
               icon={props.drawerOpen ? "chevron-down" : "chevron-up"}
@@ -78,7 +78,7 @@ function Drawer(props: DrawerProps) {
           data={codes}
           contentContainerStyle={styles.listContainer}
           renderItem={data => (
-            <TouchableNativeFeedback onPress={() => preSelectCode(parseInt(data.item.key))}>
+            <TouchableNativeFeedback onPress={() => preSelectCode(data.index)}>
               <View style={styles.code}>
                 <Image source={getLogo(data.item.code.issuer)} style={styles.logo} />
                 <View style={{ flex: 1 }}>
@@ -90,13 +90,13 @@ function Drawer(props: DrawerProps) {
                   size={28}
                   color={colours.text}
                   style={{ marginRight: -4 }}
-                  onPress={() => props.deleteCode(parseInt(data.item.key))} />
+                  onPress={() => props.deleteCode(data.index)} />
                 <IconButton
                   icon={data.item.code.starred ? "star" : "star-outline"}
                   size={28}
                   color={data.item.code.starred ? "gold" : colours.text}
                   style={{ marginRight: -4 }}
-                  onPress={() => props.toggleStarred(parseInt(data.item.key))} />
+                  onPress={() => props.toggleStarred(data.index)} />
               </View>
             </TouchableNativeFeedback>
           )} />
