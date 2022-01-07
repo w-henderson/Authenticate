@@ -26,6 +26,10 @@
       },
       "package": "com.whenderson.authenticate"
     },
+    "androidNavigationBar": {
+      "backgroundColor": "#ffffff",
+      "barStyle": "light-content"
+    },
     "web": {
       "favicon": "./assets/favicon.png"
     }

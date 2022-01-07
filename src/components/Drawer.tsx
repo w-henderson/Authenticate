@@ -63,7 +63,7 @@ function Drawer(props: DrawerProps) {
       pointerEvents={props.drawerOpen ? "auto" : "box-none"}>
       <View style={[styles.container, containerStyle]}>
         <TouchableWithoutFeedback onPress={preCallback}>
-          <View style={styles.header}>
+          <View style={[styles.header, { borderBottomWidth: props.drawerOpen ? 1 : 0 }]}>
             <Image source={getLogo(codes[props.codeIndex].code.issuer)} style={styles.logo} />
             <View style={{ flex: 1 }}>
               <Text style={styles.issuer}>{codes[props.codeIndex].code.issuer}</Text>
