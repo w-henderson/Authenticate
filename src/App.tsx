@@ -2,35 +2,41 @@ import React from "react";
 import colours from "./colours";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
-import { Alert, BackHandler, StyleSheet, Text, View } from "react-native";
-import { Provider, FAB } from "react-native-paper";
+import { Alert, BackHandler, Dimensions, LayoutAnimation, Platform, StyleSheet, UIManager, View, StatusBar as NativeStatusBar } from "react-native";
+import { Provider } from "react-native-paper";
+import PagerView from "react-native-pager-view";
 import { loadAsync } from "expo-font";
 import Clipboard from "expo-clipboard";
 
 import Header from "./components/Header";
-import CodeView from "./components/CodeView";
 import CameraScreen from "./components/CameraScreen";
-import InfoPopup from "./components/InfoPopup";
+import Drawer from "./components/Drawer";
+import Code from "./components/Code";
+import Dots from "./components/Dots";
 
 import TOTP from "./crypto/totp";
+import WelcomeScreen from "./components/WelcomeScreen";
 
 interface AppState {
   loaded: boolean,
   scanningCode: boolean,
   codes: DisplayCode[],
-  editing: boolean,
+  currentCodeIndex: number,
   popupVisible: boolean,
-  popupMessage: string
+  popupMessage: string,
+  drawerOpen: boolean
 }
 
 export interface DisplayCode {
   label: string,
   issuer: string,
+  starred: boolean,
   totp: TOTP
 }
 
 class App extends React.Component<{}, AppState> {
   popupTimeout: NodeJS.Timeout | null;
+  pagerRef: React.LegacyRef<PagerView>;
 
   constructor(props: {}) {
     super(props);
@@ -38,9 +44,10 @@ class App extends React.Component<{}, AppState> {
       loaded: false,
       scanningCode: false,
       codes: [],
-      editing: false,
+      currentCodeIndex: 0,
       popupVisible: false,
-      popupMessage: ""
+      popupMessage: "",
+      drawerOpen: false
     };
 
     this.popupTimeout = null;
@@ -48,32 +55,39 @@ class App extends React.Component<{}, AppState> {
     this.addNewCodes = this.addNewCodes.bind(this);
     this.encodeSavedCodes = this.encodeSavedCodes.bind(this);
     this.deleteCode = this.deleteCode.bind(this);
-    this.shiftCode = this.shiftCode.bind(this);
     this.clearCodes = this.clearCodes.bind(this);
     this.showPopup = this.showPopup.bind(this);
-    this.copyCode = this.copyCode.bind(this);
+    this.toggleDrawer = this.toggleDrawer.bind(this);
+    this.selectCode = this.selectCode.bind(this);
+    this.toggleStarred = this.toggleStarred.bind(this);
+
+    this.pagerRef = React.createRef();
+
+    if (
+      Platform.OS === "android" &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
   }
 
   componentDidMount() {
     loadAsync({
-      "Inter-ExtraLight": require("../assets/fonts/Inter-ExtraLight.ttf"),
-      "Inter-Regular": require("../assets/fonts/Inter-Regular.ttf"),
-      "Inter-ExtraBold": require("../assets/fonts/Inter-ExtraBold.ttf")
+      "Roboto Slab": require("../assets/fonts/RobotoSlab-Bold.ttf"),
+      "Roboto": require("../assets/fonts/Roboto-Regular.ttf")
     }).then(() => {
-      this.setState({ loaded: true });
-    });
+      BackHandler.addEventListener("hardwareBackPress", () => {
+        if (this.state.scanningCode) {
+          this.setState({ scanningCode: false });
+          return true;
+        } else {
+          return false;
+        }
+      });
 
-    BackHandler.addEventListener("hardwareBackPress", () => {
-      if (this.state.scanningCode) {
-        this.setState({ scanningCode: false });
-        return true;
-      } else {
-        return false;
-      }
-    });
-
-    this.decodeSavedCodes().then(codes => {
-      this.setState({ codes });
+      this.decodeSavedCodes().then(codes => {
+        this.setState({ codes, loaded: true });
+      });
     });
   }
 
@@ -92,6 +106,7 @@ class App extends React.Component<{}, AppState> {
       return {
         label: code.label,
         issuer: code.issuer,
+        starred: code.starred,
         secret: code.totp.key
       };
     });
@@ -108,7 +123,8 @@ class App extends React.Component<{}, AppState> {
         return {
           label: code.label,
           issuer: code.issuer,
-          totp: new TOTP(code.secret)
+          starred: code.starred === true,
+          totp: new TOTP(code.secret),
         };
       });
     });
@@ -124,24 +140,11 @@ class App extends React.Component<{}, AppState> {
           text: "Delete Code", style: "destructive", onPress: () => {
             let codes = this.state.codes;
             codes.splice(index, 1);
-            if (codes.length === 0) this.setState({ codes, editing: false }, this.encodeSavedCodes);
-            else this.setState({ codes }, this.encodeSavedCodes);
+            this.setState({ codes }, this.encodeSavedCodes);
           }
         }
       ]
     );
-  }
-
-  shiftCode(index: number, direction: number) {
-    if (index + direction >= this.state.codes.length || index + direction < 0) return;
-
-    let codes = this.state.codes;
-    let selectedCode = codes[index];
-    let swapCode = codes[index + direction];
-    codes[index] = swapCode;
-    codes[index + direction] = selectedCode;
-
-    this.setState({ codes }, this.encodeSavedCodes);
   }
 
   clearCodes() {
@@ -167,45 +170,81 @@ class App extends React.Component<{}, AppState> {
     }, 5000);
   }
 
-  copyCode(code: number) {
-    Clipboard.setString(code.toString().padStart(6, "0"));
-    this.showPopup("Code copied to clipboard");
+  toggleDrawer() {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    this.setState({ drawerOpen: !this.state.drawerOpen });
+  }
+
+  selectCode(index: number) {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    this.setState({ drawerOpen: false });
+    (this as any).pagerRef.current.setPage(index);
+  }
+
+  toggleStarred(index: number) {
+    let codes = this.state.codes;
+    codes[index].starred = !codes[index].starred;
+    this.setState({ codes }, this.encodeSavedCodes);
   }
 
   render() {
+    let codes = this.state.codes.map((code, key) => { return { code, key: key.toString() } });
+    let starredCodes = codes.filter(code => code.code.starred);
+    let unstarredCodes = codes.filter(code => !code.code.starred);
+    codes = starredCodes.concat(unstarredCodes);
+
     if (this.state.loaded) {
       if (!this.state.scanningCode) {
-        return (
-          <Provider>
-            <View style={styles.container}>
-              <StatusBar
-                style="light"
-                translucent={false}
-                backgroundColor={colours.background} />
-              <Header
-                editing={this.state.editing}
-                importCallback={() => this.setState({ scanningCode: true })}
-                removeCodesCallback={this.clearCodes}
-                stopEditingCallback={() => this.setState({ editing: false })} />
-              <CodeView
-                codes={this.state.codes}
-                editing={this.state.editing}
-                editCallback={() => this.setState({ editing: true })}
-                deletionCallback={this.deleteCode}
-                shiftCallback={this.shiftCode}
-                copyCallback={this.copyCode} />
-              <FAB
-                style={styles.actionButton}
-                icon="plus"
-                onPress={() => this.setState({ scanningCode: true })}
-                small />
-              <InfoPopup
-                visible={this.state.popupVisible}
-                message={this.state.popupMessage}
-                dismissCallback={() => this.setState({ popupVisible: false })} />
-            </View>
-          </Provider>
-        );
+        if (this.state.codes.length > 0) {
+          return (
+            <Provider>
+              <View style={styles.container}>
+                <StatusBar
+                  style="dark"
+                  translucent={true} />
+                <Header
+                  importCallback={() => this.setState({ scanningCode: true })}
+                  removeCodesCallback={this.clearCodes} />
+                <PagerView
+                  initialPage={0}
+                  ref={this.pagerRef}
+                  onPageSelected={e => this.setState({ currentCodeIndex: e.nativeEvent.position })}
+                  offscreenPageLimit={1}
+                  style={styles.pager}>
+                  {codes.map((code, index) =>
+                    <Code code={code.code} key={index} />
+                  )}
+                </PagerView>
+                <Dots
+                  dotsCount={this.state.codes.length}
+                  selectedDot={this.state.currentCodeIndex} />
+                <Drawer
+                  codes={this.state.codes}
+                  codeIndex={this.state.currentCodeIndex}
+                  drawerOpen={this.state.drawerOpen}
+                  callback={this.toggleDrawer}
+                  selectCode={this.selectCode}
+                  deleteCode={this.deleteCode}
+                  toggleStarred={this.toggleStarred} />
+              </View>
+            </Provider>
+          );
+        } else {
+          return (
+            <Provider>
+              <View style={styles.container}>
+                <StatusBar
+                  style="dark"
+                  translucent={true} />
+                <Header
+                  importCallback={() => this.setState({ scanningCode: true })}
+                  removeCodesCallback={this.clearCodes} />
+                <WelcomeScreen
+                  scanCallback={() => this.setState({ scanningCode: true })} />
+              </View>
+            </Provider>
+          )
+        }
       } else {
         return (
           <CameraScreen
@@ -223,16 +262,17 @@ class App extends React.Component<{}, AppState> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colours.background
+    backgroundColor: colours.background,
   },
-  actionButton: {
+  pager: {
     position: "absolute",
-    bottom: 0,
-    right: 0,
-    margin: 40,
-    transform: [{ "scale": 1.5 }],
-    backgroundColor: colours.accent1
-  }
+    top: 80 + (NativeStatusBar.currentHeight || 0),
+    width: "100%",
+    height: Dimensions.get("window").height - 220,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
 });
 
 export default App;

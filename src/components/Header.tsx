@@ -1,12 +1,11 @@
 import React from "react";
 import colours from "../colours";
-import { Dimensions, StyleSheet, Text, View, Linking } from "react-native";
+import { Dimensions, StyleSheet, Text, View, Linking, Image, StatusBar } from "react-native";
 import { Menu, IconButton } from "react-native-paper";
+import images from "../images";
 
 interface HeaderProps {
-  editing: boolean,
   importCallback: () => void,
-  stopEditingCallback: () => void,
   removeCodesCallback: () => void
 }
 
@@ -23,21 +22,19 @@ class Header extends React.Component<HeaderProps, HeaderState> {
   render() {
     return (
       <View style={styles.header}>
+        <Image source={images.icon} style={styles.logo} />
         <Text style={styles.text}>Authenticate</Text>
         <IconButton
-          icon={this.props.editing ? "close" : "dots-vertical"}
+          icon={"dots-vertical"}
           size={28}
-          color="white"
+          color={colours.text}
           style={styles.icon}
-          onPress={() => {
-            if (this.props.editing) this.props.stopEditingCallback();
-            else this.setState({ menuActive: true })
-          }} />
+          onPress={() => { this.setState({ menuActive: true }) }} />
 
         <Menu
           visible={this.state.menuActive}
           onDismiss={() => this.setState({ menuActive: false })}
-          anchor={{ x: Dimensions.get("screen").width - 16, y: 0 }}
+          anchor={{ x: Dimensions.get("screen").width - 16, y: StatusBar.currentHeight || 0 }}
           contentStyle={styles.menu}>
 
           <Menu.Item
@@ -64,28 +61,36 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: "100%",
-    height: 72,
-    paddingTop: 12,
-    paddingBottom: 16,
+    paddingTop: StatusBar.currentHeight || 0,
+    height: 80 + (StatusBar.currentHeight || 0),
     display: "flex",
     alignItems: "center",
-    alignContent: "center"
+    flexDirection: "row",
+    backgroundColor: colours.backgroundHighlight,
+    borderBottomColor: colours.border,
+    borderBottomWidth: 1
+  },
+  logo: {
+    height: 36,
+    width: 36,
+    marginLeft: 24,
+    marginRight: 20
   },
   text: {
-    color: colours.accent1,
-    fontSize: 32,
-    fontFamily: "Inter-ExtraBold"
+    color: colours.text,
+    fontSize: 28,
+    fontFamily: "Roboto Slab"
   },
   icon: {
     position: "absolute",
-    right: 10,
-    top: 10,
+    right: 13,
+    top: 13 + (StatusBar.currentHeight || 0),
     fontSize: 24,
     color: colours.text
   },
   menu: {
     color: colours.text,
-    backgroundColor: colours.backgroundHighlight2
+    backgroundColor: colours.background
   },
   menuItem: {
     color: colours.text

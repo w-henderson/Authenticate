@@ -36,6 +36,18 @@ test("parses url with defaults", () => {
   expect(auth.secret).toEqual([0x66, 0x6f, 0x6f]);
 })
 
+test("parses url with same issuer and label", () => {
+  let url = "otpauth://totp/foo?secret=MZXW6&issuer=foo";
+  let auth = new OTPAuth(url);
+
+  expect(auth.algorithm).toEqual("SHA1");
+  expect(auth.digits).toEqual(6);
+  expect(auth.issuer).toEqual("foo");
+  expect(auth.label).toEqual("foo");
+  expect(auth.period).toEqual(30);
+  expect(auth.secret).toEqual([0x66, 0x6f, 0x6f]);
+})
+
 test("errors when given unsupported hotp code", () => {
   let url = "otpauth://hotp/?secret=MZXW6&counter=0";
   expect(() => new OTPAuth(url)).toThrow("Only supports TOTP codes.");
