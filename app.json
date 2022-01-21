@@ -22,7 +22,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#fafafa"
+        "backgroundColor": "#F89536"
       },
       "package": "com.whenderson.authenticate"
     },
