@@ -1,0 +1,60 @@
+header {
+  width: 100%;
+  height: 64px;
+  margin: 64px 0;
+  display: flex;
+  flex-direction: row;
+  place-items: center;
+
+  div {
+    font-family: "Roboto Slab";
+    font-weight: bold;
+    display: flex;
+    place-items: center;
+    font-size: 32px;
+    color: var(--text);
+    height: 48px;
+    margin-right: 96px;
+    flex: 1;
+
+    img {
+      width: 48px;
+      margin-right: 16px;
+    }
+  }
+
+  ul {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    gap: 64px;
+
+    li a {
+      color: var(--text);
+      text-decoration: none;
+      transition: color 100ms;
+
+      &:hover {
+        color: var(--accent);
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  header { 
+    ul {
+      display: none;
+    }
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  header {
+    margin: 64px 0 32px 0;
+
+    span {
+      display: none;
+    }
+  }
+}

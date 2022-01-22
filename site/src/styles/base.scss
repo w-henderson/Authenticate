@@ -1,0 +1,22 @@
+@use "header";
+@use "hero";
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Slab:wght@400;700&display=swap');
+
+body {
+  font-family: Roboto;
+  background-image: linear-gradient(to right, var(--background) 60%, var(--accent-light) 70%);
+  max-width: min(1000px, calc(100vw - 128px));
+  margin: auto;
+
+  --accent: #f89536;
+  --accent-light: #ffcea0;
+  --text: #292726;
+  --background: #fafafa;
+}
+
+@media only screen and (max-width: 1000px) {
+  body {
+    background-image: linear-gradient(to bottom, var(--background) 500px, var(--accent-light) 700px);
+  }
+}
