@@ -1,13 +1,20 @@
 @use "header";
 @use "hero";
+@use "section";
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Slab:wght@400;700&display=swap');
 
 body {
   font-family: Roboto;
-  background-image: linear-gradient(to right, var(--background) 25%, var(--accent-light) 75%);
-  max-width: min(1000px, calc(100vw - 128px));
-  margin: auto;
+  background-image:
+    radial-gradient(circle at 100% 10vh, var(--accent-light) 35vw, transparent 75vw),
+    radial-gradient(circle at 0 150vh, var(--accent-light) 35vw, transparent 60vw),
+    radial-gradient(circle at 100% 250vh, var(--accent-light) 35vw, transparent 60vw),
+    radial-gradient(circle at 0 350vh, var(--accent-light) 35vw, transparent 60vw),
+    radial-gradient(circle at 100% 450vh, var(--accent-light) 35vw, transparent 60vw);
+  //background-image: linear-gradient(to right, var(--background) 25%, var(--accent-light) 75%);
+  margin: 0;
+  padding: 0;
 
   --accent: #f89536;
   --accent-light: #ffcea0;

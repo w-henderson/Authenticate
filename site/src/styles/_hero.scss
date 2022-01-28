@@ -2,7 +2,9 @@ section.hero {
   display: flex;
   flex-direction: row;
   gap: 0 128px;
-  min-height: calc(100vh - 192px);
+  min-height: calc(100vh - 128px);
+  max-width: min(1000px, calc(100vw - 128px));
+  margin: auto;
 
   div.text {
     max-width: 500px;
