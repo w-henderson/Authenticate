@@ -5,7 +5,7 @@
 
   <p align="center">
     A simple two-factor authentication app, built with React Native.<br>
-    <a href=https://authenticate.whenderson.dev"><strong>Download Now »</strong></a>
+    <a href="https://authenticate.whenderson.dev"><strong>Download Now »</strong></a>
   </p><br>
 </div>
 
