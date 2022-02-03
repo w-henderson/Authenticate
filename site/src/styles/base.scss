@@ -1,0 +1,34 @@
+@use "header";
+@use "hero";
+@use "section";
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Slab:wght@400;700&display=swap');
+
+body {
+  font-family: Roboto;
+  background-image:
+    radial-gradient(circle at 100% 10vh, var(--accent-light) 35vw, transparent 75vw),
+    radial-gradient(circle at 0 150vh, var(--accent-light) 35vw, transparent 60vw),
+    radial-gradient(circle at 100% 250vh, var(--accent-light) 35vw, transparent 60vw),
+    radial-gradient(circle at 0 350vh, var(--accent-light) 35vw, transparent 60vw),
+    radial-gradient(circle at 100% 450vh, var(--accent-light) 35vw, transparent 60vw);
+  //background-image: linear-gradient(to right, var(--background) 25%, var(--accent-light) 75%);
+  margin: 0;
+  padding: 0;
+
+  --accent: #f89536;
+  --accent-light: #ffcea0;
+  --text: #292726;
+  --background: #fafafa;
+}
+
+@media only screen and (max-width: 1000px) {
+  body {
+    background-image:
+    radial-gradient(circle at 0 150vh, var(--background) 0, transparent 500px),
+      radial-gradient(circle at 100% 250vh, var(--background) 0, transparent 500px),
+      radial-gradient(circle at 0 350vh, var(--background) 0, transparent 500px),
+      radial-gradient(circle at 100% 450vh, var(--background) 0, transparent 500px),
+      linear-gradient(to bottom, var(--background) 500px, var(--accent-light) 700px);
+  }
+}

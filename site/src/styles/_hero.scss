@@ -1,0 +1,79 @@
+section.hero {
+  display: flex;
+  flex-direction: row;
+  gap: 0 128px;
+  min-height: calc(100vh - 128px);
+  max-width: min(1000px, calc(100vw - 128px));
+  margin: auto;
+
+  div.text {
+    max-width: 500px;
+    margin: auto;
+
+    h1 {
+      color: var(--text);
+      font-family: "Roboto Slab";
+      font-weight: bold;
+      font-size: 64px;
+      margin-top: 12px;
+      line-height: 1.25em;
+      
+      span {
+        color: var(--accent);
+      }
+    }
+
+    p {
+      opacity: 0.75;
+      font-size: 1.5rem;
+      margin-bottom: 48px;
+    }
+  }
+
+  div.image {
+    max-width: 436px;
+    margin: auto;
+
+    img {
+      max-width: 100%;
+      max-height: calc(100vh - 320px);
+      filter: drop-shadow(0 0 32px rgba(0, 0, 0, 0.25));
+    }
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  section.hero {
+    flex-wrap: wrap;
+    
+    div.text {
+      margin: 0 auto 64px auto;
+      min-width: 0;
+      width: 100%;
+      text-align: center;
+
+      h1 {
+        font-size: min(9.5vw, 48px);
+      }
+    }
+
+    div.image {
+      min-width: 0;
+      width: 100%;
+
+      img {
+        width: 100%;
+        max-height: unset;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  section.hero {
+    div.text {
+      margin: 0 0 64px 0;
+      text-align: left;
+    }
+  }
+}
