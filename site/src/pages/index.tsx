@@ -12,6 +12,8 @@ interface ScrollAnimations {
 class Index extends Component<{}, ScrollAnimations> {
   drawerRef: React.RefObject<HTMLImageElement>;
   welcomeRef: React.RefObject<HTMLImageElement>;
+  sectionRef: React.RefObject<HTMLElement>;
+  downloadRef: React.RefObject<HTMLElement>;
 
   constructor(props: {}) {
     super(props);
@@ -24,12 +26,19 @@ class Index extends Component<{}, ScrollAnimations> {
 
     this.drawerRef = React.createRef();
     this.welcomeRef = React.createRef();
+    this.sectionRef = React.createRef();
+    this.downloadRef = React.createRef();
 
     this.handleScrollAnimation = this.handleScrollAnimation.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener("scroll", this.handleScrollAnimation);
+
+    switch (window.location.hash) {
+      case "#features": return this.sectionRef.current!.scrollIntoView();
+      case "#download": return this.downloadRef.current!.scrollIntoView();
+    }
   }
 
   componentWillUnmount() {
@@ -75,9 +84,8 @@ class Index extends Component<{}, ScrollAnimations> {
           </div>
 
           <ul>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Features</a></li>
-            <li><a href="#">Download</a></li>
+            <li><a href="#features" onClick={() => this.sectionRef.current!.scrollIntoView({ behavior: "smooth" })}>Features</a></li>
+            <li><a href="#download" onClick={() => this.downloadRef.current!.scrollIntoView({ behavior: "smooth" })}>Download</a></li>
           </ul>
         </header>
 
@@ -93,7 +101,7 @@ class Index extends Component<{}, ScrollAnimations> {
           </div>
         </section>
 
-        <section>
+        <section ref={this.sectionRef}>
           <div className="text">
             <h1><span>Unlimited accounts,</span> unlimited security.</h1>
             <p>
@@ -119,7 +127,7 @@ class Index extends Component<{}, ScrollAnimations> {
           </div>
         </section>
 
-        <section>
+        <section ref={this.downloadRef}>
           <div className="text">
             <h1>Download <span>Authenticate</span> now!</h1>
             <p style={{ opacity: 1 }}>
