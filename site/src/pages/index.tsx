@@ -97,7 +97,7 @@ class Index extends Component<{}, ScrollAnimations> {
           </div>
 
           <div className="image">
-            <img src="/static/images/mockup.png" alt="Screenshot" style={this.state.heroAnimated ? visible : hidden} />
+            <img src="/static/images/mockup.webp" alt="Screenshot" style={this.state.heroAnimated ? visible : hidden} />
           </div>
         </section>
 
@@ -110,7 +110,7 @@ class Index extends Component<{}, ScrollAnimations> {
           </div>
 
           <div className="image">
-            <img src="/static/images/drawer.png" alt="Screenshot" ref={this.drawerRef} style={this.state.drawerAnimated ? visible : hidden} />
+            <img src="/static/images/drawer.webp" alt="Screenshot" ref={this.drawerRef} style={this.state.drawerAnimated ? visible : hidden} />
           </div>
         </section>
 
@@ -123,7 +123,7 @@ class Index extends Component<{}, ScrollAnimations> {
           </div>
 
           <div className="image">
-            <img src="/static/images/welcome.png" alt="Screenshot" ref={this.welcomeRef} style={this.state.welcomeAnimated ? visible : hidden} />
+            <img src="/static/images/welcome.webp" alt="Screenshot" ref={this.welcomeRef} style={this.state.welcomeAnimated ? visible : hidden} />
           </div>
         </section>
 
