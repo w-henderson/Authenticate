@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Helmet } from "react-helmet";
 
+import DownloadButton from "../components/DownloadButton";
+
 import "../styles/base.scss";
 
 interface ScrollAnimations {
@@ -93,7 +95,7 @@ class Index extends Component<{}, ScrollAnimations> {
           <div className="text">
             <h1>Secure your accounts with <span>Authenticate.</span></h1>
             <p>Open-source, easy-to-use and completely free for all your two-factor authentication needs.</p>
-            <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Google Play" />
+            <DownloadButton />
           </div>
 
           <div className="image">
@@ -131,7 +133,7 @@ class Index extends Component<{}, ScrollAnimations> {
           <div className="text">
             <h1>Download <span>Authenticate</span> now!</h1>
             <p style={{ opacity: 1 }}>
-              <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Google Play" />
+              <DownloadButton />
             </p>
           </div>
         </section>
