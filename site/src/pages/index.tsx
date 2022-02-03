@@ -40,8 +40,8 @@ class Index extends Component<{}, ScrollAnimations> {
     let y: number = window.scrollY;
 
     let heroAnimated = true;
-    let drawerAnimated = y > this.drawerRef!.current!.y;
-    let welcomeAnimated = y > this.welcomeRef!.current!.y;
+    let drawerAnimated = y > this.drawerRef!.current!.y || this.state.drawerAnimated;
+    let welcomeAnimated = y > this.welcomeRef!.current!.y || this.state.welcomeAnimated;
 
     this.setState({
       heroAnimated,

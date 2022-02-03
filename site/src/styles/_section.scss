@@ -55,11 +55,39 @@ section:not(.hero) {
       order: 2;
     }
   }
+
+  &:last-of-type {
+    margin: 128px auto 64px auto;
+  }
 }
 
 @keyframes animateIn {
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  section:not(.hero) {
+    flex-wrap: nowrap;
+    flex-direction: column;
+    place-items: center;
+
+    div.text {
+      h1 {
+        font-size: min(9.5vw, 48px);
+      }
+    }
+
+    &:nth-child(2n) {
+      div.text {
+        order: 2;
+      }
+  
+      div.image {
+        order: 1;
+      }
+    }
   }
 }

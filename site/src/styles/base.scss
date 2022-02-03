@@ -24,6 +24,11 @@ body {
 
 @media only screen and (max-width: 1000px) {
   body {
-    background-image: linear-gradient(to bottom, var(--background) 500px, var(--accent-light) 700px);
+    background-image:
+    radial-gradient(circle at 0 150vh, var(--background) 0, transparent 500px),
+      radial-gradient(circle at 100% 250vh, var(--background) 0, transparent 500px),
+      radial-gradient(circle at 0 350vh, var(--background) 0, transparent 500px),
+      radial-gradient(circle at 100% 450vh, var(--background) 0, transparent 500px),
+      linear-gradient(to bottom, var(--background) 500px, var(--accent-light) 700px);
   }
 }
