@@ -61,8 +61,27 @@ section:not(.hero) {
     }
   }
 
-  &:last-of-type {
+  &:not(.privacy):last-of-type {
     margin: 128px auto 64px auto;
+  }
+
+  &.privacy {
+    margin: 64px auto;
+    font-size: 1.1em;
+    display: block;
+
+    h1, h2, h3 {
+      color: var(--text);
+      font-family: "Roboto Slab";
+      font-weight: bold;
+
+      span {
+        color: var(--accent);
+      }
+    }
+
+    h1 { margin-top: 0; }
+    h2 { margin-top: 2em; }
   }
 }
 
