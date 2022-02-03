@@ -77,7 +77,6 @@ class Index extends Component<{}, ScrollAnimations> {
           <ul>
             <li><a href="#">About</a></li>
             <li><a href="#">Features</a></li>
-            <li><a href="#">Contact</a></li>
             <li><a href="#">Download</a></li>
           </ul>
         </header>
@@ -117,6 +116,15 @@ class Index extends Component<{}, ScrollAnimations> {
 
           <div className="image">
             <img src="/static/images/welcome.png" alt="Screenshot" ref={this.welcomeRef} style={this.state.welcomeAnimated ? visible : hidden} />
+          </div>
+        </section>
+
+        <section>
+          <div className="text">
+            <h1>Download <span>Authenticate</span> now!</h1>
+            <p style={{ opacity: 1 }}>
+              <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Google Play" />
+            </p>
           </div>
         </section>
       </main>
