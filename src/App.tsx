@@ -127,7 +127,7 @@ class App extends React.Component<{}, AppState> {
           totp: new TOTP(code.secret),
         };
       });
-    });
+    }).catch(() => []);
   }
 
   deleteCode(index: number) {
