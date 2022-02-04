@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Helmet } from "react-helmet";
 
+import "../styles/base.scss";
+
 export class Privacy extends Component {
   render() {
     return (
