@@ -24,7 +24,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F89536"
       },
-      "package": "com.whenderson.authenticate"
+      "package": "com.whenderson.authenticate",
+      "permissions": [
+        "CAMERA"
+      ]
     },
     "androidNavigationBar": {
       "backgroundColor": "#ffffff",
