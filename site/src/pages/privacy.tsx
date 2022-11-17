@@ -32,7 +32,7 @@ export class Privacy extends Component {
           </p>
 
           <h2>Privacy Policy</h2>
-          The Service does not transmit any data off of your device. The only data stored on your device are your two-factor authentication secrets, along with the corresponding names of the providers, user accounts, and whether you have starred the code. These are stored securely in your device's secure data storage location, and depending on your device, may be encrypted. We do not have access to any of your data.
+          The Service collects anonymous analytical and technical data to improve your experience. This includes crash logs and diagnostics. This data is collected through Google, and you may request its deletion through Google. The only data stored on your device are your two-factor authentication secrets, along with the corresponding names of the providers, user accounts, and whether you have starred the code. These are stored securely in your device's secure data storage location, and depending on your device, may be encrypted. We do not have access to any of your data.
 
           <h2>Terms of Service</h2>
           By using the Service, you agree to the following terms.
